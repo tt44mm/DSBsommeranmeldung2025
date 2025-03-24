@@ -250,8 +250,35 @@ function idiomaclick(indexstr) {
     // Keine Aktion nötig, da keine jQuery-Funktionalität ersetzt werden muss
 }
 
+// Validierungsfunktion für Postleitzahl (5 Ziffern)
+function validatePLZ(input) {
+    // Entferne zuerst alle vorhandenen Fehlermeldungen
+    clearValidationError(input);
+    
+    const plzRegex = /^\d{5}$/;
+    if (!plzRegex.test(input.value)) {
+        showValidationError(input, 'Por favor, introduzca un código postal válido de 5 dígitos.');
+        return false;
+    }
+    return true;
+}
+
+// Validierungsfunktion für Telefonnummern (Ziffern, Leerzeichen und + am Anfang)
+function validatePhone(input) {
+    // Entferne zuerst alle vorhandenen Fehlermeldungen
+    clearValidationError(input);
+    
+    const phoneRegex = /^[+]?[0-9 ]+$/;
+    if (!phoneRegex.test(input.value)) {
+        showValidationError(input, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+        return false;
+    }
+    return true;
+}
+
 // Validierung des gesamten Formulars beim Absenden
 function submitclick(event) {
+    console.log('===== FORMULARVALIDIERUNG GESTARTET =====');
     // Verhindere das Standard-Submit-Verhalten
     if (event) {
         event.preventDefault();
@@ -267,27 +294,14 @@ function submitclick(event) {
 
     // Validiere alle Pflichtfelder
     let isValid = true;
-    const requiredFields = document.querySelectorAll('.required');
+    let requiredValid = true;
+    let formatValid = true;
+    let specialValid = true;
     
+    console.log('===== REQUIRED CHECK GESTARTET =====');
+    // SCHRITT 1: Zuerst alle required-Felder auf Leerheit prüfen
+    const requiredFields = document.querySelectorAll('.required');
     requiredFields.forEach(field => {
-        // Spezielle Behandlung für das Geburtsdatum
-        if (field.id === 'birthdate0') {
-            const birthdateValid = validateAge(field);
-            if (!birthdateValid) {
-                isValid = false;
-                // Stelle sicher, dass die Fehlermeldung sofort sichtbar ist
-                const errorElement = field.parentElement.querySelector('.validationerror');
-                if (errorElement) {
-                    errorElement.style.display = 'block';
-                    errorElement.style.visibility = 'visible';
-                    errorElement.style.opacity = '1';
-                }
-                field.classList.add('error');
-                field.classList.remove('valid');
-            }
-            return;
-        }
-        
         // Spezielle Behandlung für Radio-Buttons
         if (field.type === 'radio') {
             const radioGroup = document.querySelectorAll('input[name="' + field.name + '"]');
@@ -299,7 +313,11 @@ function submitclick(event) {
                 }
             });
             
-            if (!anyChecked) {
+            const fieldResult = anyChecked;
+            console.log(`Validierung REQUIRED für ${field.name} (Radio): ${fieldResult ? 'TRUE' : 'FALSE'}`);
+            
+            if (!fieldResult) {
+                requiredValid = false;
                 isValid = false;
                 showValidationError(field, 'Este campo es obligatorio.');
             }
@@ -315,77 +333,186 @@ function submitclick(event) {
                 }
             });
             
-            if (!anyChecked) {
+            const fieldResult = anyChecked;
+            console.log(`Validierung REQUIRED für ${field.name} (Checkbox): ${fieldResult ? 'TRUE' : 'FALSE'}`);
+            
+            if (!fieldResult) {
+                requiredValid = false;
                 isValid = false;
                 showValidationError(field, 'Es necesario seleccionar al menos una semana.');
             }
         }
-        // Behandlung für normale Textfelder
-        else if (field.type === 'text' || field.type === 'textarea' || field.type === 'email' || field.type === 'date') {
-            if (!field.value.trim()) {
+        // Behandlung für alle anderen Eingabefelder (text, textarea, tel, date, email, select)
+        else if (field.type === 'text' || field.type === 'textarea' || field.type === 'tel' || 
+                 field.type === 'date' || field.type === 'email' || field.type === 'select-one') {
+            
+            const fieldResult = field.value.trim() !== '';
+            console.log(`Validierung REQUIRED für ${field.id}: ${fieldResult ? 'TRUE' : 'FALSE'}`);
+            
+            if (!fieldResult) {
+                requiredValid = false;
                 isValid = false;
                 showValidationError(field, 'Este campo es obligatorio.');
             }
-            // E-Mail-Validierung
-            else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
-                isValid = false;
-                showValidationError(field, 'Por favor, introduzca una dirección de correo electrónico válida.');
-            }
-            // Prüfe, ob E-Mail-Felder übereinstimmen
-            else if (field.id === 'Email2' && field.value !== document.getElementById('Email1').value) {
-                isValid = false;
-                showValidationError(field, 'El correo electrónico repetido tiene que ser identico con el correo electrónico en el campo anterior');
-            }
         }
     });
-
-    // Wenn das Formular gültig ist, können wir es absenden
-    if (isValid) {
-        document.getElementById('anmeldungsform').submit();
-    }
-
-    return isValid;
-}
-
-// Hilfsfunktion zur Anzeige von Validierungsfehlern
-function showValidationError(field, message) {
-    // Erstelle Fehlermeldungs-Container
-    const errorElement = document.createElement('div');
-    errorElement.className = 'validationerror';
-    errorElement.innerHTML = '<span>' + message + '</span>';
     
-    // Füge die Fehlermeldung ein
-    const formRow = field.closest('.form-row');
-    if (formRow) {
-        formRow.appendChild(errorElement);
-    } else {
-        const parent = field.parentNode;
-        if (parent) {
-            parent.appendChild(errorElement);
+    console.log(`===== REQUIRED CHECK ERGEBNIS: ${requiredValid ? 'TRUE' : 'FALSE'} =====`);
+    
+    console.log('===== FORMAT CHECK GESTARTET =====');
+    // SCHRITT 2: Dann spezielle Formatvalidierungen durchführen
+    // PLZ validieren - Muss genau 5 Ziffern enthalten
+    const plzField = document.getElementById('PLZ');
+    if (plzField && plzField.value.trim()) { // Nur validieren, wenn nicht leer
+        const plzRegex = /^\d{5}$/;
+        const plzValue = plzField.value.trim();
+        const isPlzValid = plzRegex.test(plzValue);
+        
+        console.log(`Validierung FORMAT für PLZ: ${isPlzValid ? 'TRUE' : 'FALSE'} (Wert: ${plzValue})`);
+        
+        if (!isPlzValid) {
+            formatValid = false;
+            isValid = false;
+            showValidationError(plzField, 'Por favor, introduzca un código postal válido de 5 dígitos.');
         }
     }
     
-    // Markiere das Feld visuell als ungültig
-    field.classList.add('error');
+    // Telefon validieren - Darf nur Ziffern, Leerzeichen und + am Anfang enthalten
+    const phoneField = document.getElementById('Phone');
+    if (phoneField && phoneField.value.trim()) { // Nur validieren, wenn nicht leer
+        const phoneRegex = /^[+]?[0-9 ]+$/;
+        const phoneValue = phoneField.value.trim();
+        const isPhoneValid = phoneRegex.test(phoneValue);
+        
+        console.log(`Validierung FORMAT für Phone: ${isPhoneValid ? 'TRUE' : 'FALSE'} (Wert: ${phoneValue})`);
+        
+        if (!isPhoneValid) {
+            formatValid = false;
+            isValid = false;
+            showValidationError(phoneField, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+        }
+    }
+    
+    // Zusätzliches Telefon validieren (falls vorhanden und nicht leer)
+    const phone0Field = document.getElementById('phone0');
+    if (phone0Field && phone0Field.value.trim()) { // Nur validieren, wenn nicht leer
+        const phoneRegex = /^[+]?[0-9 ]+$/;
+        const phoneValue = phone0Field.value.trim();
+        const isPhoneValid = phoneRegex.test(phoneValue);
+        
+        console.log(`Validierung FORMAT für phone0: ${isPhoneValid ? 'TRUE' : 'FALSE'} (Wert: ${phoneValue})`);
+        
+        if (!isPhoneValid) {
+            formatValid = false;
+            isValid = false;
+            showValidationError(phone0Field, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+        }
+    }
+    
+    console.log(`===== FORMAT CHECK ERGEBNIS: ${formatValid ? 'TRUE' : 'FALSE'} =====`);
+    
+    console.log('===== SPEZIAL CHECK GESTARTET =====');
+    // SCHRITT 3: Spezielle Validierungen wie Alter und Email-Vergleich
+    // Validiere das Geburtsdatum
+    const birthdateField = document.getElementById('birthdate0');
+    if (birthdateField) {
+        // Immer validieren, unabhu00e4ngig davon, ob leer oder nicht
+        // Wenn es leer ist, wird es bereits als erforderlich behandelt
+        // Wenn es gefu00fcllt ist, muss das Alter validiert werden
+        if (birthdateField.value.trim()) {
+            const ageResult = validateAge(birthdateField);
+            console.log(`Validierung SPEZIAL fu00fcr birthdate0 (Alter): ${ageResult ? 'TRUE' : 'FALSE'}`);
+            
+            if (!ageResult) {
+                specialValid = false;
+                isValid = false;
+                // Fehlermeldung wird durch validateAge gesetzt
+            }
+        }
+    }
+    
+    // Email-Vergleich validieren
+    const email1Field = document.getElementById('Email1');
+    const email2Field = document.getElementById('Email2');
+    if (email1Field && email2Field && 
+        email1Field.value.trim() && email2Field.value.trim()) {
+        
+        const emailsMatch = email1Field.value.trim() === email2Field.value.trim();
+        console.log(`Validierung SPEZIAL für Email-Vergleich: ${emailsMatch ? 'TRUE' : 'FALSE'}`);
+        
+        if (!emailsMatch) {
+            specialValid = false;
+            isValid = false;
+            showValidationError(email2Field, 'El correo electrónico repetido tiene que ser idéntico con el correo electrónico en el campo anterior');
+        }
+    }
+    
+    console.log(`===== SPEZIAL CHECK ERGEBNIS: ${specialValid ? 'TRUE' : 'FALSE'} =====`);
+    
+    // Zusammenfassung der Validierung ausgeben
+    console.log(`===== VALIDIERUNGSGESAMTERGEBNIS: ${isValid ? 'TRUE' : 'FALSE'} =====`);
+    console.log(`REQUIRED: ${requiredValid ? 'TRUE' : 'FALSE'} | FORMAT: ${formatValid ? 'TRUE' : 'FALSE'} | SPEZIAL: ${specialValid ? 'TRUE' : 'FALSE'}`);
+    
+    // Wenn alle Validierungen bestanden wurden, sende das Formular ab
+    if (isValid) {
+        console.log('Formular ist gültig');
+        return true;
+    } else {
+        console.log('Formular ist ungültig');
+        // Finde den ersten Fehler und scrolle dorthin
+        const firstError = document.querySelector('.validationerror');
+        if (firstError && firstError.previousElementSibling) {
+            firstError.previousElementSibling.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
+    }
 }
 
-// Diese Variablen werden dynamisch vom PHP-Code gefüllt
-// Sie sind nur Platzhalter und müssen im PHP-Template gesetzt werden
-let cursoprecio_1_1, cursoprecio_1_2, cursoprecio_1_3, cursoprecio_1_4;
-let cursoprecio_2_1, cursoprecio_2_2, cursoprecio_2_3, cursoprecio_2_4;
-let cursoprecio_3_1, cursoprecio_3_2, cursoprecio_3_3, cursoprecio_3_4;
-let cursoprecio_4_1, cursoprecio_4_2, cursoprecio_4_3, cursoprecio_4_4;
-let cursoprecio_5_1, cursoprecio_5_2, cursoprecio_5_3, cursoprecio_5_4;
-let cursoprecio_6_1, cursoprecio_6_2, cursoprecio_6_3, cursoprecio_6_4;
+// Funktion zum Anzeigen von Validierungsfehlern
+function showValidationError(field, message) {
+    console.log('showValidationError aufgerufen für:', field.id, 'mit Nachricht:', message);
+    // Zuerst alle vorhandenen Fehlermeldungen für dieses Feld entfernen
+    clearValidationError(field);
+    
+    // Fehlermeldung erstellen
+    const errorElement = document.createElement('div');
+    errorElement.className = 'validationerror';
+    errorElement.innerText = message;
+    
+    // Fehlermeldung direkt nach dem Eingabefeld einfügen
+    const parent = field.parentNode;
+    // Prüfen, ob bereits eine Fehlermeldung existiert
+    const existingError = parent.querySelector('.validationerror');
+    if (existingError) {
+        console.log('Bestehende Fehlermeldung gefunden, wird entfernt');
+        existingError.remove();
+    }
+    
+    // Fehlermeldung nach dem Input-Feld einfügen
+    console.log('Füge Fehlermeldung nach Feld ein:', field.id);
+    field.insertAdjacentElement('afterend', errorElement);
+    
+    // Eingabefeld als fehlerhaft markieren
+    field.classList.add('error');
+    field.classList.remove('valid');
+}
 
-let fruehcursoprecio_1, fruehcursoprecio_2, fruehcursoprecio_3, fruehcursoprecio_4, fruehcursoprecio_5;
-let mittagcursoprecio_1, mittagcursoprecio_2, mittagcursoprecio_3, mittagcursoprecio_4, mittagcursoprecio_5;
-
-let weekLabel1, weekLabel2, weekLabel3, weekLabel4, weekLabel5;
+function clearValidationError(field) {
+    // Entferne die Fehlerklasse vom Eingabefeld
+    field.classList.remove('error');
+    field.classList.add('valid');
+    
+    // Finde alle Fehlermeldungen im selben Container
+    const parent = field.parentNode;
+    const errors = parent.querySelectorAll('.validationerror');
+    errors.forEach(error => error.remove());
+}
 
 // Funktion zur Altersvalidierung
 function validateAge(input) {
-    // Entferne bestehende Fehlermeldungen
+    console.log('validateAge gestartet für:', input.id || input.name);
+    
+    // Entferne bestehende Fehler
     removeExistingError(input);
     
     // Überprüfe, ob ein Datum eingegeben wurde
@@ -417,7 +544,7 @@ function validateAge(input) {
         age--;
     }
     
-    console.log('Berechnetes Alter:', age);
+    console.log('Berechnetes Alter:', age, 'Jahre');
     
     // Überprüfe, ob das Alter im gültigen Bereich liegt
     const isValidAge = age >= 2 && age <= 19;
@@ -442,23 +569,21 @@ function validateAge(input) {
             if (altElement) altElement.style.display = 'block';
         }
         
-        // Stelle sicher, dass die Fehlermarkierung und -meldung sofort sichtbar sind
-        input.classList.add('error');
-        input.classList.remove('valid');
-        const errorElement = input.parentElement.querySelector('.validationerror');
-        if (errorElement) {
-            errorElement.style.display = 'block';
-            errorElement.style.visibility = 'visible';
-            errorElement.style.opacity = '1';
-        }
         return false;
+    } else {
+        // Verstecke JUNG/ALT Meldungen
+        const jungElement = document.getElementById('JUNG');
+        const altElement = document.getElementById('ALT');
+        
+        if (jungElement) jungElement.style.display = 'none';
+        if (altElement) altElement.style.display = 'none';
+        
+        // Markiere als gültig
+        input.classList.add('valid');
+        input.classList.remove('error');
+        
+        return true;
     }
-    
-    // Wenn alles gültig ist
-    hideAgeError(input);
-    input.classList.remove('error');
-    input.classList.add('valid');
-    return true;
 }
 
 function removeExistingError(input) {
@@ -512,6 +637,20 @@ function hideAgeError(input) {
     if (altElement) altElement.style.display = 'none';
 }
 
+// Diese Variablen werden dynamisch vom PHP-Code gefüllt
+// Sie sind nur Platzhalter und müssen im PHP-Template gesetzt werden
+let cursoprecio_1_1, cursoprecio_1_2, cursoprecio_1_3, cursoprecio_1_4;
+let cursoprecio_2_1, cursoprecio_2_2, cursoprecio_2_3, cursoprecio_2_4;
+let cursoprecio_3_1, cursoprecio_3_2, cursoprecio_3_3, cursoprecio_3_4;
+let cursoprecio_4_1, cursoprecio_4_2, cursoprecio_4_3, cursoprecio_4_4;
+let cursoprecio_5_1, cursoprecio_5_2, cursoprecio_5_3, cursoprecio_5_4;
+let cursoprecio_6_1, cursoprecio_6_2, cursoprecio_6_3, cursoprecio_6_4;
+
+let fruehcursoprecio_1, fruehcursoprecio_2, fruehcursoprecio_3, fruehcursoprecio_4, fruehcursoprecio_5;
+let mittagcursoprecio_1, mittagcursoprecio_2, mittagcursoprecio_3, mittagcursoprecio_4, mittagcursoprecio_5;
+
+let weekLabel1, weekLabel2, weekLabel3, weekLabel4, weekLabel5;
+
 // Setze DOMContentLoaded Listener, um Initialisierungen nach dem Laden durchzuführen
 document.addEventListener('DOMContentLoaded', function() {
     // Radio-Buttons für DSB-Frage initialisieren
@@ -548,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Füge Form-Submit-Event-Listener hinzu
-    const form = document.getElementById('anmeldungsform');
+    const form = document.getElementById('formins');
     if (form) {
         form.addEventListener('submit', function(event) {
             if (!submitclick(event)) {
@@ -568,4 +707,75 @@ document.addEventListener('DOMContentLoaded', function() {
             validateAge(this);
         });
     }
-}); 
+
+    // Event-Listener für die Validierung beim Laden der Seite hinzufügen
+    const plzField = document.getElementById('PLZ');
+    if (plzField) {
+        plzField.addEventListener('input', function() {
+            const plzRegex = /^\d{5}$/;
+            if (!plzRegex.test(this.value)) {
+                showValidationError(this, 'Por favor, introduzca un código postal válido de 5 dígitos.');
+            } else {
+                clearValidationError(this);
+            }
+        });
+        plzField.addEventListener('blur', function() {
+            const plzRegex = /^\d{5}$/;
+            if (!plzRegex.test(this.value)) {
+                showValidationError(this, 'Por favor, introduzca un código postal válido de 5 dígitos.');
+            } else {
+                clearValidationError(this);
+            }
+        });
+    }
+
+    // Telefon-Validierung
+    const phoneField = document.getElementById('Phone');
+    if (phoneField) {
+        phoneField.addEventListener('input', function() {
+            const phoneRegex = /^[+]?[0-9 ]+$/;
+            if (!phoneRegex.test(this.value)) {
+                showValidationError(this, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+            } else {
+                clearValidationError(this);
+            }
+        });
+        phoneField.addEventListener('blur', function() {
+            const phoneRegex = /^[+]?[0-9 ]+$/;
+            if (!phoneRegex.test(this.value)) {
+                showValidationError(this, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+            } else {
+                clearValidationError(this);
+            }
+        });
+    }
+
+    // Zusatztelefon-Validierung (nur wenn ein Wert eingegeben wurde)
+    const phone0Field = document.getElementById('phone0');
+    if (phone0Field) {
+        phone0Field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                const phoneRegex = /^[+]?[0-9 ]+$/;
+                if (!phoneRegex.test(this.value)) {
+                    showValidationError(this, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+                } else {
+                    clearValidationError(this);
+                }
+            } else {
+                clearValidationError(this);
+            }
+        });
+        phone0Field.addEventListener('blur', function() {
+            if (this.value.trim()) {
+                const phoneRegex = /^[+]?[0-9 ]+$/;
+                if (!phoneRegex.test(this.value)) {
+                    showValidationError(this, 'Por favor, introduzca un número de teléfono válido (solo dígitos, espacios y + al principio).');
+                } else {
+                    clearValidationError(this);
+                }
+            } else {
+                clearValidationError(this);
+            }
+        });
+    }
+});

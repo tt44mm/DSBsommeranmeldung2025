@@ -309,14 +309,14 @@ require_once 'includes/dropdownparadas_2025.php';
 			<div class="form-row">
 				<label class="col-sm-3 col-form-label required" for="PLZ">C&oacute;digo Postal <sup>&#9733;</sup></label>
 				<div class="col-sm-8">
-					<input class="required" type="text" id="PLZ" name="PLZ" size="8" value="<?php echo $POSTARRAY['PLZ']; ?>" />
+					<input class="required" type="text" id="PLZ" name="PLZ" size="8" value="<?php echo $POSTARRAY['PLZ']; ?>" pattern="[0-9]{5}" title="Bitte geben Sie eine 5-stellige Postleitzahl ein" />
 				</div>
 			</div>
 
 			<div class="form-row">
 				<label class="col-sm-3 col-form-label required" for="Phone">Tel&eacute;fono <sup>&#9733;</sup></label>
 				<div class="col-sm-8">
-					<input class="required digits" type="text" id="Phone" name="Phone" size="16" value="<?php echo $POSTARRAY['Phone']; ?>" />
+					<input class="required digits" type="tel" id="Phone" name="Phone" size="16" value="<?php echo $POSTARRAY['Phone']; ?>" pattern="[+0-9 ]+" title="Nur Ziffern, Leerzeichen und + am Anfang erlaubt" />
 				</div>
 			</div>
 
@@ -324,7 +324,7 @@ require_once 'includes/dropdownparadas_2025.php';
 			<div class="form-row">
 				<label class="col-sm-3 col-form-label" for="phone0">Tel&eacute;fono adicional</label>
 				<div class="col-sm-8">
-					<input class="digits" type="text" id="phone0" name="phone0" size="16" value="<?php echo $POSTARRAY['phone0']; ?>" />
+					<input class="digits" type="tel" id="phone0" name="phone0" size="16" value="<?php echo $POSTARRAY['phone0']; ?>" pattern="[+0-9 ]+" title="Nur Ziffern, Leerzeichen und + am Anfang erlaubt" />
 				</div>
 			</div>
 
@@ -332,13 +332,13 @@ require_once 'includes/dropdownparadas_2025.php';
 			<div class="form-row">
 				<label class="col-sm-3 col-form-label required" for="Email1">Correo electr&oacute;nico <sup>&#9733;</sup></label>
 				<div class="col-sm-8">
-					<input class="required email" type="text" id="Email1" name="Email1" size="45" value="<?php echo $POSTARRAY['Email1']; ?>" />
+					<input class="required email" type="email" id="Email1" name="Email1" size="45" value="<?php echo $POSTARRAY['Email1']; ?>" />
 				</div>
 			</div>
 			<div class="form-row">
 				<label class="col-sm-3 col-form-label required" for="Email2">Repetir correo electr&oacute;nico <sup>&#9733;</sup></label>
 				<div class="col-sm-8">
-					<input class="required email" type="text" id="Email2" name="Email2" size="45" value="<?php echo $POSTARRAY['Email2']; ?>" data-match="Email1" />
+					<input class="required email" type="email" id="Email2" name="Email2" size="45" value="<?php echo $POSTARRAY['Email2']; ?>" data-match="Email1" />
 				</div>
 			</div>
 
@@ -655,7 +655,7 @@ se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter ori
 				<div style="text-align:center;margin-top:1em;">
 					<div class="row mb-4 mt-4">
 						<div class="col-12 text-right">
-							<button type="button" class="btn btn-dsb" onclick="if(submitclick()) document.getElementById('formins').submit();">Próxima página</button>
+							<button type="button" class="btn btn-dsb" onclick="if (submitclick()) document.getElementById('formins').submit();">Pr&oacute;xima p&aacute;gina</button>
 						</div>
 					</div>
 				</div>
@@ -681,6 +681,28 @@ se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter ori
     Die Validierung erfolgt jetzt komplett über reines JavaScript in der Datei pure-validation.js
     ohne Abhängigkeit von jQuery oder jQuery Validate.
 -->
+
+<style>
+.input-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.validationerror {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+.error {
+    border: 1px solid red !important;
+}
+
+.valid {
+    border: 1px solid green !important;
+}
+</style>
 
 <script>
     // Initialisierung der Preisberechnung mit reinem JavaScript

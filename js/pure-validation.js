@@ -195,7 +195,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fehlermeldung anzeigen - optimierte Version
     function showError(field, message) {
-        if (!field || !message) return;
+        if (!field || !message) {
+            console.log("showError: Feld oder Nachricht fehlt", field, message);
+            return;
+        }
+        
+        console.log("showError wird aufgerufen für:", field.id || field.name, "mit Nachricht:", message);
         
         // Zuerst vorhandene Fehlermeldungen für dieses Feld entfernen
         removeError(field);
@@ -506,15 +511,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funktion zur Validierung des gesamten Formulars
     function validateForm() {
-        console.log("Starte Formularvalidierung");
+        console.log("===== VALIDIERUNG GESTARTET =====");
         
         // Entferne zuerst alle vorhandenen Fehlermeldungen
         removeAllErrors();
         
         // Validiere alle Pflichtfelder
         let formValid = true;
+        let requiredValid = true;
+        let formatValid = true;
         
         try {
+            // SCHRITT 1: REQUIRED CHECK - Prüfe ob Pflichtfelder ausgefüllt sind
+            console.log("===== REQUIRED CHECK GESTARTET =====");
+            
             // Validiere einfache Eingabefelder
             const requiredInputs = document.querySelectorAll('#formins input.required, #formins select.required, #formins textarea.required');
             console.log("Gefundene Pflichtfelder (Inputs):", requiredInputs.length);
@@ -524,12 +534,26 @@ document.addEventListener('DOMContentLoaded', function() {
             
             for (let i = 0; i < fieldsToValidate; i++) {
                 const field = requiredInputs[i];
-                const isFieldValid = validateField(field, false);
-                console.log("Validiere Feld:", field.id || field.name, "Ergebnis:", isFieldValid);
                 
-                if (!isFieldValid) {
+                // Prüfe zunächst nur auf Vorhandensein (required)
+                let isEmpty = false;
+                
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    isEmpty = !field.checked;
+                } else {
+                    isEmpty = !field.value.trim();
+                }
+                
+                const fieldRequiredValid = !isEmpty;
+                console.log(`Validierung REQUIRED für ${field.id || field.name}: ${fieldRequiredValid ? 'TRUE' : 'FALSE'}`);
+                
+                if (!fieldRequiredValid) {
+                    requiredValid = false;
                     formValid = false;
                 }
+                
+                // Führe die vollständige Validierung durch (inkl. Format)
+                validateField(field, false);
             }
             
             // Validiere Radio-Gruppen
@@ -550,12 +574,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     
-                    if (!anyChecked) {
-                        const isRadioValid = validateField(radios[0], false);
-                        console.log("Validiere Radio-Gruppe", groupName, ":", isRadioValid);
-                        if (!isRadioValid) {
-                            formValid = false;
-                        }
+                    const radioRequired = anyChecked;
+                    console.log(`Validierung REQUIRED für Radio-Gruppe ${groupName}: ${radioRequired ? 'TRUE' : 'FALSE'}`);
+                    
+                    if (!radioRequired) {
+                        requiredValid = false;
+                        formValid = false;
+                        validateField(radios[0], false);
                     }
                 }
             });
@@ -572,14 +597,76 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 
-                if (!anyChecked) {
-                    const isWeekValid = validateField(weekCheckboxes[0], false);
-                    console.log("Validiere Wochen-Checkboxen:", isWeekValid);
-                    if (!isWeekValid) {
-                        formValid = false;
-                    }
+                const checkboxesRequired = anyChecked;
+                console.log(`Validierung REQUIRED für Wochen-Checkboxen: ${checkboxesRequired ? 'TRUE' : 'FALSE'}`);
+                
+                if (!checkboxesRequired) {
+                    requiredValid = false;
+                    formValid = false;
+                    validateField(weekCheckboxes[0], false);
                 }
             }
+            
+            console.log(`===== REQUIRED CHECK ERGEBNIS: ${requiredValid ? 'TRUE' : 'FALSE'} =====`);
+            
+            // SCHRITT 2: FORMAT CHECK - Prüfe spezielle Formate
+            console.log("===== FORMAT CHECK GESTARTET =====");
+            
+            // PLZ validieren - Muss genau 5 Ziffern enthalten
+            const plzField = document.getElementById('PLZ');
+            if (plzField && plzField.value.trim()) { // Nur validieren, wenn nicht leer
+                const plzRegex = /^\d{5}$/;
+                const plzValue = plzField.value.trim();
+                const plzFormatValid = plzRegex.test(plzValue);
+                
+                console.log(`Validierung FORMAT für PLZ: ${plzFormatValid ? 'TRUE' : 'FALSE'} (Wert: ${plzValue})`);
+                
+                if (!plzFormatValid) {
+                    formatValid = false;
+                    formValid = false;
+                    // Fehlermeldung direkt anzeigen und Bestätigung loggen
+                    console.log('Zeige Fehlermeldung für PLZ');
+                    showError(plzField, 'La código postal debe contener exactamente 5 dígitos.');
+                }
+            }
+            
+            // Telefon validieren
+            const phoneField = document.getElementById('Phone');
+            if (phoneField && phoneField.value.trim()) { // Nur validieren, wenn nicht leer
+                const phoneRegex = /^[+]?[0-9 ]+$/;
+                const phoneValue = phoneField.value.trim();
+                const phoneFormatValid = phoneRegex.test(phoneValue);
+                
+                console.log(`Validierung FORMAT für Phone: ${phoneFormatValid ? 'TRUE' : 'FALSE'} (Wert: ${phoneValue})`);
+                
+                if (!phoneFormatValid) {
+                    formatValid = false;
+                    formValid = false;
+                    // Fehlermeldung direkt anzeigen und Bestätigung loggen
+                    console.log('Zeige Fehlermeldung für Phone');
+                    showError(phoneField, 'El número de teléfono debe contener solo dígitos, espacios y opcionalmente un signo "+" al inicio.');
+                }
+            }
+            
+            // Zusätzliches Telefon validieren
+            const phone0Field = document.getElementById('phone0');
+            if (phone0Field && phone0Field.value.trim()) {
+                const phoneRegex = /^[+]?[0-9 ]+$/;
+                const phoneValue = phone0Field.value.trim();
+                const phone0FormatValid = phoneRegex.test(phoneValue);
+                
+                console.log(`Validierung FORMAT für phone0: ${phone0FormatValid ? 'TRUE' : 'FALSE'} (Wert: ${phoneValue})`);
+                
+                if (!phone0FormatValid) {
+                    formatValid = false;
+                    formValid = false;
+                    // Fehlermeldung direkt anzeigen und Bestätigung loggen
+                    console.log('Zeige Fehlermeldung für phone0');
+                    showError(phone0Field, 'El número de teléfono adicional debe contener solo dígitos, espacios y opcionalmente un signo "+" al inicio.');
+                }
+            }
+            
+            console.log(`===== FORMAT CHECK ERGEBNIS: ${formatValid ? 'TRUE' : 'FALSE'} =====`);
             
             // Nach der Validierung alle erzeugten Fehler explizit sichtbar machen
             document.querySelectorAll('.validationerror').forEach(function(error) {
@@ -597,12 +684,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 100);
                 }
             }
+            
+            // Ausgabe der Gesamtergebnisse
+            console.log("===== VALIDIERUNGSGESAMTERGEBNIS =====");
+            console.log(`REQUIRED: ${requiredValid ? 'TRUE' : 'FALSE'} | FORMAT: ${formatValid ? 'TRUE' : 'FALSE'}`);
+            console.log(`Gesamtergebnis der Formularvalidierung: ${formValid ? 'TRUE' : 'FALSE'}`);
         } catch (e) {
             console.error("Fehler bei der Formularvalidierung:", e);
             formValid = false;
         }
         
-        console.log("Gesamtergebnis der Formularvalidierung:", formValid);
         return formValid;
     }
     
@@ -771,64 +862,51 @@ document.addEventListener('DOMContentLoaded', function() {
         input[type="radio"][data-validation-state="error"],
         input[type="checkbox"][data-validation-state="unchecked"],
         input[type="radio"][data-validation-state="unchecked"] {
-            width: 16px !important;
-            height: 16px !important;
-            min-width: 16px !important;
-            min-height: 16px !important;
-            max-width: 16px !important;
-            max-height: 16px !important;
-            box-sizing: border-box !important;
-            appearance: auto !important;
+            /* Keine speziellen Stile notwendig */
         }
         
-        /* Checkbox-spezifische Eigenschaften */
-        input[type="checkbox"],
-        input[type="checkbox"][data-validation-state="valid"],
-        input[type="checkbox"][data-validation-state="error"],
-        input[type="checkbox"][data-validation-state="unchecked"] {
-            -webkit-appearance: checkbox !important;
-            -moz-appearance: checkbox !important;
-        }
-        
-        /* Radio-Button-spezifische Eigenschaften */
-        input[type="radio"],
-        input[type="radio"][data-validation-state="valid"],
-        input[type="radio"][data-validation-state="error"],
-        input[type="radio"][data-validation-state="unchecked"] {
-            -webkit-appearance: radio !important;
-            -moz-appearance: radio !important;
-            border-radius: 50% !important;
-        }
-        
-        /* Edge-spezifische Farbkorrekturen für Checkboxen und Radio-Buttons */
-        @supports (-ms-ime-align:auto) {
-            input[type="checkbox"]:checked, 
-            input[type="radio"]:checked {
-                accent-color: #0078d7 !important; /* Edge-Blau */
-                color: #0078d7 !important;
-            }
-        }
-        
-        /* Standard-Farbe für moderne Browser */
-        input[type="checkbox"]:checked, 
-        input[type="radio"]:checked {
-            accent-color: #0078d7 !important; /* Ähnlich Microsoft Blau */
-        }
-        
-        /* Validierungsfehler-Container */
+        /* Fehlermeldungen */
         .validationerror {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 4px;
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
-            color: #dc3545 !important;
-            margin-top: 0.25rem !important;
-            font-size: 14px !important;
-            font-weight: normal !important;
-            padding: 0.5rem !important;
-            background-color: rgba(220, 53, 69, 0.05) !important;
-            border-radius: 0.25rem !important;
-            border-left: 3px solid #dc3545 !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            background-color: #fff8f8;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border-left: 3px solid #dc3545;
+        }
+        
+        /* Suchefeld mit speziellem Platzhalter */
+        .custom-select {
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        
+        /* Wochenauswahl - Containerklassen */
+        .form-group.weeks-container {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            background-color: #f8f9fa;
+        }
+        
+        /* Checkboxen in der Wochenauswahl */
+        .form-group.weeks-container input[type="checkbox"][data-validation-state="error"] + label {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        /* Ausrichtung für Radio-Button-Gruppierungen */
+        .form-check-inline {
+            display: inline-flex;
+            align-items: center;
+            padding-left: 0;
+            margin-right: 0.75rem;
         }
     `;
     document.head.appendChild(style);
