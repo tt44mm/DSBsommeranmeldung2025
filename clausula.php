@@ -1,0 +1,18 @@
+<p>En virtud de las Leyes y Reglamentos vigentes y de aplicaci&oacute;n a la Protecci&oacute;n de Datos Personales, la ASOCIACI&Oacute;N DEL COLEGIO ALEM&Aacute;N DE BILBAO le informa que los datos que nos facilite, ser&aacute;n incorporados a nuestros ficheros, automatizados o no, con la finalidad de evaluar su solicitud, y en su caso, gestionar y tramitar las acciones formativas en los idiomas ingl&eacute;s/alem&aacute;n se inscriba el alumno/a. Sus datos ser&aacute;n conservados siempre que sea imprescindible o leg&iacute;timo para la finalidad que se captaron y en los plazos marcados por las obligaciones legales.</p>
+
+<p>Basamos este tratamiento de sus datos personales, incluidos los datos de salud aportados, en su consentimiento expl&iacute;cito (mediante su conformidad al presente documento), en su necesidad para llevar a cabo las acciones formativas del alumno/a y en el cumplimiento de una obligaci&oacute;n legal.</p>
+ 
+<p>A su vez le informamos de la posibilidad de que los datos personales de los alumnos, incluidos los de salud, puedan ser facilitados a terceras entidades en los que exista una obligaci&oacute;n legal.</p>
+ 
+<p>El titular autoriza que los datos personales de los alumno/as, incluidos los de salud, puedan ser utilizados, &uacute;nicamente los datos imprescindiblemente necesarios para la ejecuci&oacute;n del contrato o relaci&oacute;n, comunic&aacute;rselos a la compa&ntilde;&iacute;a aseguradora que cubra los seguros de accidentes. Una vez finalizadas las actividades formativas, se utilizar&aacute;n los datos con la finalidad de emitir certificaciones acad&eacute;micas y enviarle comunicaciones para ofertas de cursos, actividades extraescolares, as&iacute; como cualquier otra informaci&oacute;n referente al Centro, por cualquier medio, incluso electr&oacute;nico.</p>
+ 
+<p>Asimismo, Vd. autoriza a la Asociaci&oacute;n del Colegio la captaci&oacute;n, inclusi&oacute;n y reproducci&oacute;n de las im&aacute;genes de los alumno/as en las distintas actividades del Colegio, y su utilizaci&oacute;n para ilustrar las noticias remitidas a las publicaciones, cat&aacute;logo, redes sociales y p&aacute;ginas de Internet desarrolladas dentro del &aacute;mbito educativo/formativo de la ASOCIACI&Oacute;N DEL COLEGIO ALEM&Aacute;N DE BILBAO, sea cual sea el medio utilizado para la captaci&oacute;n o reproducci&oacute;n de la imagen.<p>
+ 
+<p>El titular de los datos o su representante legal, se comprometen a comunicar por escrito al colegio cualquier modificaci&oacute;n que se produzca en los datos aportados.</p>
+ 
+<p>Usted tiene derecho a obtener confirmaci&oacute;n sobre si en ASOCIACI&Oacute;N DEL COLEGIO ALEM&Aacute;N DE BILBAO  estamos tratando sus datos personales, por tanto tiene derecho a acceder a sus datos personales, rectificar los datos inexactos o solicitar su supresi&oacute;n cuando los datos ya no sean necesarios. Para ejercer estos derechos puede dirigirse a ASOCIACI&Oacute;N DEL COLEGIO ALEM&Aacute;N DE BILBAO, (Dpto. de Administraci&oacute;n), Avda. Jes&uacute;s Gal&iacute;ndez, 3, 48004 Bilbao, aportando fotocopia del DNI. </p>
+ 
+<p>Puede consultar la informaci&oacute;n adicional y detallada sobre Protecci&oacute;n de Datos en nuestra Web en: <b><a
+href="https://www.dsbilbao.org/aviso_legal/" target="_new">http://www.dsbilbao.org/aviso_legal</a></b></p>
+ 
+<p>Igualmente, podr&aacute; ponerse en contacto con el delegado de protecci&oacute;n de datos de ASOCIACI&Oacute;N DEL COLEGIO ALEM&Aacute;N DE BILBAO, en el correo electr&oacute;nico <b><a href="mailto:dpd@dsbilbao.org">dpd@dsbilbao.org</a></b></p>
