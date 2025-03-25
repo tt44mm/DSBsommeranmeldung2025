@@ -1,5 +1,5 @@
 <?php
-$usejquery = true;
+$usejquery = false;
 $usesheepit = false;
 $showform = true;
 require_once 'includes/headbody_2025.php';

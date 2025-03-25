@@ -112,7 +112,9 @@ td {
 #showform div.field {
     margin: 1px 0px;
     overflow: hidden;
-    _height: 0.1%;
+    padding-top: 0 !important;
+    line-height: 1.2em;
+    padding-left:10px!important;
 }
 
 blockquote.klein {
@@ -220,15 +222,22 @@ div.legend {
     font-size: 1em;
     background-color: #0085CA;
     border-top: 2px solid #0085CA;
-    padding-left: 20px;
+    padding-left: 4px;
 	color:white;
 }
 
 div.Mainlegend {
     background-color: #0085CA;
     border-top: 2px solid #0085CA;
-	font-size: 1.2em;
+	font-size: 1.05em;
 	color:white;
+	padding-bottom: 2px;
+    margin-top: 12px;
+}
+
+div#cursos1 {
+	margin-left:20px;
+	margin-top:24px;
 }
 
 select#Busida, select#Busvuelta, select#Busvuelta2  {

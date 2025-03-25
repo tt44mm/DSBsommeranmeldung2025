@@ -1,6 +1,88 @@
 /**
  * Reine JavaScript-Validierung für das Anmeldeformular
  * Ohne jQuery und andere externe Abhängigkeiten
+ * 
+ * ZUSAMMENSPIEL MIT ANDEREN DATEIEN:
+ * - Diese Datei: Komplexes Formular-Validierungssystem
+ * - js-functions.js: UI-Funktionen und einfache Feld-Validierungen
+ *
+ * HINWEIS ZUR FUNKTIONSAUFTEILUNG:
+ * Das validationRules-Objekt enthält Validierungsregeln, die teilweise
+ * auch als eigenständige Funktionen in js-functions.js implementiert sind.
+ * Bei Änderungen an der Validierungslogik müssen ggf. beide Dateien
+ * angepasst werden.
+ */
+
+/**
+ * Funktionsübersicht (25.03.2025):
+ * 
+ * required(value):
+ *   Prüft, ob ein Pflichtfeld ausgefüllt ist.
+ *   Wird für alle Pflichtfelder bei Eingabe, Verlassen des Feldes und Formularvalidierung aufgerufen.
+ *
+ * email(value):
+ *   Validiert, ob eine E-Mail-Adresse ein gültiges Format hat.
+ *   Wird bei E-Mail-Feldern bei Eingabe, Verlassen des Feldes und Formularvalidierung aufgerufen.
+ *
+ * equalTo(value, targetId):
+ *   Prüft, ob zwei Felder denselben Wert haben (z.B. E-Mail-Wiederholung).
+ *   Wird beim Vergleich der zwei E-Mail-Felder aufgerufen.
+ *
+ * minlength(value, length):
+ *   Prüft, ob ein Wert eine Mindestlänge erreicht.
+ *   Wird für Felder mit erforderlicher Mindestlänge aufgerufen.
+ *
+ * validateField(field, silent):
+ *   Hauptfunktion zur Validierung eines einzelnen Feldes nach definierten Regeln.
+ *   Wird für jedes Feld bei Eingabe, Verlassen und Formularabsendung aufgerufen.
+ *
+ * findParentByClassName(element, className):
+ *   Hilfsfunktion zum Finden eines übergeordneten Elements anhand einer Klasse.
+ *   Wird von Validierungsfunktionen verwendet, um Container-Elemente zu finden.
+ *
+ * findWeekSection():
+ *   Findet den Bereich der Wochenauswahl-Checkboxen im Formular.
+ *   Wird bei der Validierung der Wochenauswahl verwendet.
+ *
+ * showError(field, message):
+ *   Zeigt eine Fehlermeldung für ein bestimmtes Feld an.
+ *   Wird aufgerufen, wenn bei der Validierung eines Feldes ein Fehler festgestellt wird.
+ *
+ * handleRadioButtonError(field, errorContainer):
+ *   Spezielle Fehlerbehandlung für Radio-Buttons.
+ *   Wird aufgerufen, wenn ein Radio-Button-Fehler angezeigt werden soll.
+ *
+ * handleCheckboxError(field, errorContainer):
+ *   Spezielle Fehlerbehandlung für Checkbox-Gruppen (Wochenauswahl).
+ *   Wird aufgerufen, wenn die Wochenauswahl nicht valide ist.
+ *
+ * findLabelWithText(text):
+ *   Findet Labels mit einem bestimmten Text.
+ *   Wird für die präzise Fehlerplatzierung bei Radiobuttons und Checkboxen verwendet.
+ *
+ * handleTextareaError(field, errorContainer):
+ *   Spezielle Fehlerbehandlung für Textarea-Felder.
+ *   Wird aufgerufen, wenn ein Textarea-Feld nicht valide ist.
+ *
+ * handleStandardInputError(field, errorContainer):
+ *   Standardbehandlung für Fehler bei einfachen Eingabefeldern.
+ *   Wird für normale Textfelder, Zahlenfelder etc. bei Fehlern aufgerufen.
+ *
+ * removeError(field):
+ *   Entfernt die Fehlermeldung für ein bestimmtes Feld.
+ *   Wird aufgerufen, wenn ein Feld nach einer Korrektur wieder gültig ist.
+ *
+ * removeAllErrors():
+ *   Entfernt alle Fehlermeldungen im gesamten Formular.
+ *   Wird zu Beginn einer neuen Validierung aufgerufen, um vorherige Fehler zu löschen.
+ *
+ * validateForm():
+ *   Zentrale Funktion zur Validierung des gesamten Formulars.
+ *   Wird beim Absenden des Formulars aufgerufen und prüft alle Felder.
+ *
+ * submitclick():
+ *   Vereinfachte Version der submitclick-Funktion auf globaler Ebene.
+ *   Wird beim Klick auf den Submit-Button aufgerufen, um die Validierung zu starten.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -699,6 +781,46 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log(`===== FORMAT CHECK ERGEBNIS: ${formatValid ? 'TRUE' : 'FALSE'} =====`);
             
+            // SCHRITT 3: SPEZIAL CHECK - Prüfe spezielle Validierungen wie Alter
+            console.log("===== SPEZIAL CHECK GESTARTET =====");
+            let specialValid = true;
+            
+            // Validiere das Geburtsdatum und Alter
+            const birthdateField = document.getElementById('birthdate0');
+            if (birthdateField && birthdateField.value.trim()) {
+                // Verwende die existierende validateAge-Funktion aus js-functions.js
+                if (typeof validateAge === 'function') {
+                    const ageResult = validateAge(birthdateField);
+                    console.log(`Validierung SPEZIAL für birthdate0 (Alter): ${ageResult ? 'TRUE' : 'FALSE'}`);
+                    
+                    if (!ageResult) {
+                        specialValid = false;
+                        formValid = false;
+                        // Fehlermeldung wird durch validateAge gesetzt
+                    }
+                } else {
+                    console.error('validateAge Funktion nicht gefunden - Altersvalidierung übersprungen');
+                }
+            }
+            
+            // Email-Vergleich validieren
+            const email1Field = document.getElementById('Email1');
+            const email2Field = document.getElementById('Email2');
+            if (email1Field && email2Field && 
+                email1Field.value.trim() && email2Field.value.trim()) {
+                
+                const emailsMatch = email1Field.value.trim() === email2Field.value.trim();
+                console.log(`Validierung SPEZIAL für Email-Vergleich: ${emailsMatch ? 'TRUE' : 'FALSE'}`);
+                
+                if (!emailsMatch) {
+                    specialValid = false;
+                    formValid = false;
+                    showError(email2Field, 'El correo electrónico repetido tiene que ser idéntico con el correo electrónico en el campo anterior');
+                }
+            }
+            
+            console.log(`===== SPEZIAL CHECK ERGEBNIS: ${specialValid ? 'TRUE' : 'FALSE'} =====`);
+            
             // Nach der Validierung alle erzeugten Fehler explizit sichtbar machen
             document.querySelectorAll('.validationerror').forEach(function(error) {
                 error.style.display = 'block';
@@ -749,11 +871,26 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Wenn alle Gruppen gültig sind, dann setze das Gesamtergebnis auf true
             if (allRadioGroupsValid && weekCheckboxesValid) {
-                requiredValid = true;
-                formValid = formatValid; // Gesamtergebnis hängt nur noch vom Format ab
+                // Altes Verhalten (fehlerhaft):
+                // requiredValid = true;
+                // formValid = formatValid && specialValid;
+                
+                // Korrigiertes Verhalten:
+                // Setze requiredValid nur auf true, wenn keine Fehler in Pflichtfeldern vorhanden sind
+                // Wir prüfen dazu, ob Fehlermeldungen für Pflichtfelder existieren
+                const requiredErrors = document.querySelectorAll('.validationerror');
+                const hasRequiredErrors = requiredErrors.length > 0;
+                
+                if (!hasRequiredErrors) {
+                    requiredValid = true;
+                    formValid = formatValid && specialValid;
+                } else {
+                    // Beibehalten des false-Status, wenn Pflichtfelder nicht ausgefüllt sind
+                    formValid = false;
+                }
             }
             
-            console.log(`REQUIRED (korrigiert): ${requiredValid ? 'TRUE' : 'FALSE'} | FORMAT: ${formatValid ? 'TRUE' : 'FALSE'}`);
+            console.log(`REQUIRED (korrigiert): ${requiredValid ? 'TRUE' : 'FALSE'} | FORMAT: ${formatValid ? 'TRUE' : 'FALSE'} | SPECIAL: ${specialValid ? 'TRUE' : 'FALSE'}`);
             console.log(`Gesamtergebnis der Formularvalidierung: ${formValid ? 'TRUE' : 'FALSE'}`);
         } catch (e) {
             console.error("Fehler bei der Formularvalidierung:", e);

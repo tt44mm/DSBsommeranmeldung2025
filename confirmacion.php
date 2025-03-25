@@ -14,7 +14,7 @@ function mystriptag(&$item)
   }
 }
 
-$usejquery = true;
+$usejquery = false;
 $usesheepit = false;
 $showform = true;
 

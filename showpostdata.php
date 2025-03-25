@@ -26,34 +26,34 @@ echo "</pre><hr>";
 ?>
 <div id="showform" style="padding-left: 0;padding-top:5px;">
 <div class="legend">Madre o tutor/a 1:</div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float"> Nombre</label> <strong><?php echo strip_tags($POSTsane['MfirstName']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float">Apellidos</label> <strong><?php echo strip_tags($POSTsane['MlastName']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="required float" for="M_DNI">DNI / NIE</label><strong><?php echo strip_tags($POSTsane['M_DNI']) ?></strong></div>
+        <div class="field"  ><label  class="required float"> Nombre</label> <strong><?php echo strip_tags($POSTsane['MfirstName']) ?></strong></div>
+        <div class="field"  ><label  class="required float">Apellidos</label> <strong><?php echo strip_tags($POSTsane['MlastName']) ?></strong></div>
+        <div class="field"  ><label class="required float" for="M_DNI">DNI / NIE</label><strong><?php echo strip_tags($POSTsane['M_DNI']) ?></strong></div>
 
 <div class="legend">Padre o tutor/a 2:</div>
 
-        <div class="field" style="padding-left: 10px;padding-top:5px;"><label  class="required float" for="PfirstName">Nombre</label> <strong><?php echo strip_tags($POSTsane['PfirstName']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="PlastName">Apellidos</label> <strong><?php echo strip_tags($POSTsane['PlastName']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="required float" for="M_DNI">DNI / NIE</label><strong><?php echo strip_tags($POSTsane['P_DNI']) ?></strong></div>
+        <div class="field" ><label  class="required float" for="PfirstName">Nombre</label> <strong><?php echo strip_tags($POSTsane['PfirstName']) ?></strong></div>
+        <div class="field"  ><label  class="required float" for="PlastName">Apellidos</label> <strong><?php echo strip_tags($POSTsane['PlastName']) ?></strong></div>
+        <div class="field"  ><label class="required float" for="M_DNI">DNI / NIE</label><strong><?php echo strip_tags($POSTsane['P_DNI']) ?></strong></div>
 
 <div class="legend">Direcci&oacute;n, contacto:</div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float " for="Street">Direcci&oacute;n (calle y n&uacute;meros)  </label> <strong><?php echo strip_tags($POSTsane['Street']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float " for="Town">Poblaci&oacute;n  </label> <strong><?php echo strip_tags($POSTsane['Town']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="PLZ">C&oacute;digo Postal  </label> <strong><?php echo strip_tags($POSTsane['PLZ']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="Phone">Tel&eacute;fono  </label> <strong><?php echo strip_tags($POSTsane['Phone']) ?></strong></div>
+        <div class="field"  ><label  class="required float " for="Street">Direcci&oacute;n (calle y n&uacute;meros)  </label> <strong><?php echo strip_tags($POSTsane['Street']) ?></strong></div>
+        <div class="field"  ><label  class="required float " for="Town">Poblaci&oacute;n  </label> <strong><?php echo strip_tags($POSTsane['Town']) ?></strong></div>
+        <div class="field"  ><label  class="required float" for="PLZ">C&oacute;digo Postal  </label> <strong><?php echo strip_tags($POSTsane['PLZ']) ?></strong></div>
+        <div class="field"  ><label  class="required float" for="Phone">Tel&eacute;fono  </label> <strong><?php echo strip_tags($POSTsane['Phone']) ?></strong></div>
 
-        <?php if (array_key_exists('phone0', $POSTsane) AND (strlen(trim($POSTsane['phone0']))>0) ) {?> <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="notrequired float">Tel&eacute;fono adicional</label><strong>&nbsp;<?php echo strip_tags($POSTsane['phone0']) ?></strong></div><?php } ?>
+        <?php if (array_key_exists('phone0', $POSTsane) AND (strlen(trim($POSTsane['phone0']))>0) ) {?> <div class="field"  ><label class="notrequired float">Tel&eacute;fono adicional</label><strong>&nbsp;<?php echo strip_tags($POSTsane['phone0']) ?></strong></div><?php } ?>
 
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="Email1">Correo electr&oacute;nico  </label> <strong><?php echo strip_tags($POSTsane['Email1']) ?></strong></div>
+        <div class="field"  ><label  class="required float" for="Email1">Correo electr&oacute;nico  </label> <strong><?php echo strip_tags($POSTsane['Email1']) ?></strong></div>
 
         <div class="legend">Transporte gratis:</div>
 
-        <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="Busida">Bus ida  </label> <strong><?php echo strip_tags($POSTsane['Busida']) ?></strong></div>
+        <div class="field"  ><label  class="required float" for="Busida">Bus ida  </label> <strong><?php echo strip_tags($POSTsane['Busida']) ?></strong></div>
 
-		<div class="field"  style="padding-left:10px;padding-top:5px;">
+		<div class="field"  >
           <label  class="required float" for="Busvuelta">Bus vuelta </label> <strong><?php echo strip_tags($POSTsane['Busvuelta']) ?></strong></div>
 
-        <div class="field"  style="padding-left:10px;padding-top:5px;">
+        <div class="field"  >
           <label  class="required float" for="Busvuelta2">Bus vuelta 16:15 </label> <strong><?php echo strip_tags($POSTsane['Busvuelta2']) ?></strong></div>
 
         <div id="hijos" class="field"  style="padding-left:0;padding-top:5px;">
@@ -78,13 +78,13 @@ echo "</pre><hr>";
              <!--
              <div class="legend"><strong>Hijo/a <?php //echo $hijostr+1; ?></strong></div>-->
 
-             <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="nombre#index#">Nombre  </label> <strong><?php $key='nombre'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+             <div class="field"><label  class="required float" for="nombre#index#">Nombre  </label> <strong><?php $key='nombre'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
-             <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="apellidos#index#">Apellidos  </label> <strong><?php $key='apellidos'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+             <div class="field"><label  class="required float" for="apellidos#index#">Apellidos  </label> <strong><?php $key='apellidos'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
-             <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="required float"  for="birthdate#index#">Fecha de nacimiento  </label> <strong><?php $key='birthdate'.$hijostr; echo date("d/m/Y", strtotime(strip_tags($POSTsane[$key]))); ?></strong></div>
+             <div class="field"><label class="required float"  for="birthdate#index#">Fecha de nacimiento  </label> <strong><?php $key='birthdate'.$hijostr; echo date("d/m/Y", strtotime(strip_tags($POSTsane[$key]))); ?></strong></div>
 
-             <div class="field"  style="padding-left:10px;padding-top:5px;"><br>
+             <div class="field">
                  <label class="required float"  for="colegio#index#">Colegio habitual de la ense&ntilde;anza reglada </label>
 				 <strong><?php
 				   $key='colegio'.$hijostr;
@@ -97,27 +97,27 @@ echo "</pre><hr>";
                <?php $key='alergias'.$hijostr;
                $content=strip_tags($POSTsane[$key]);
                if (strlen(trim($content))>0) { ?>
-            	   <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="notrequired float" for="alergias#index#">Alergias </label><strong>&nbsp;<?php echo "$content</strong></div>";
+            	   <div class="field"  ><label class="notrequired float" for="alergias#index#">Alergias </label><strong>&nbsp;<?php echo "$content</strong></div>";
                }
 
                $key='intolerancias'.$hijostr;
                $content=strip_tags($POSTsane[$key]);
                if (strlen(trim($content))>0) { ?>
-                <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="notrequired float" for="intolerancias#index#">Intolerancias a alimentos </label><strong>&nbsp;<?php echo "$content</strong></div>";
+                <div class="field"  ><label class="notrequired float" for="intolerancias#index#">Intolerancias a alimentos </label><strong>&nbsp;<?php echo "$content</strong></div>";
                }
 
                $key='medicaciones'.$hijostr;
                $content=strip_tags($POSTsane[$key]);
                if (strlen(trim($content))>0) { ?>
-                 <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="notrequired float" for="medicaciones#index#">Medicaciones </label><strong>&nbsp;<?php echo "$content</strong></div>";
+                 <div class="field"  ><label class="notrequired float" for="medicaciones#index#">Medicaciones </label><strong>&nbsp;<?php echo "$content</strong></div>";
                }?>
 
-            <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="float required description1">&iquest;Sabe nadar sin ayuda?  </label> <strong><?php $key='nadar'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+            <div class="field"  ><label  class="float required description1">&iquest;Sabe nadar sin ayuda?  </label> <strong><?php $key='nadar'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
-			<div class="field"  style="padding-left:10px;padding-top:5px;">
+			<div class="field"  >
               <label class="float required description1">&iquest;Tiene  autorizaci&oacute;n para ba&ntilde;arse en las piscinas hinchables infantiles bajo la  supervisi&oacute;n del profesor/a?    </label> <strong><?php $key='autohinch'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
-            <div class="field"  style="padding-left:10px;padding-top:5px;"><label class="float required description1">&iquest;Tiene autorizaci&oacute;n para ba&ntilde;arse en la piscina grande bajo la supervisi&oacute;n del socorrista?   </label> <strong><?php $key='autopisci'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+            <div class="field"  ><label class="float required description1">&iquest;Tiene autorizaci&oacute;n para ba&ntilde;arse en la piscina grande bajo la supervisi&oacute;n del socorrista?   </label> <strong><?php $key='autopisci'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
              <?php
                   $key='idioma'.$hijostr;
@@ -127,11 +127,11 @@ echo "</pre><hr>";
 			<?php
 			$cumpleISO=date("Y-m-d", strtotime(strip_tags($POSTsane['birthdate0'])));
             //echo $cumpleISO;
-	        $kursName = getKursName($KursNameJung,$KursNameAlt,$cumpleISO, $stichtagkurs); //siehe cursossemanasprecios.php
-			echo $kursName;
+	        //$kursName = getKursName($KursNameJung,$KursNameAlt,$cumpleISO, $stichtagkurs); //siehe cursossemanasprecios.php
+			//echo $kursName;
 			?></strong></div>
 
-            <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="float required description1">Idioma  </label> <strong><?php echo strip_tags($POSTsane[$key]);//print_r($POSTsane); ?></strong></div>
+            <div class="field"  ><label  class="float required description1">Idioma  </label> <strong><?php echo strip_tags($POSTsane[$key]);//print_r($POSTsane); ?></strong></div>
 
       <?php //$currentWeekIdx=0;//diese zeile weg, wenn man die Optionen wochenweise wählen kann
 		$showExamen = false;
@@ -142,14 +142,14 @@ echo "</pre><hr>";
 			($kursoptions0[$currentWeekIdx][3]==3) ||
 			($kursoptions0[$currentWeekIdx][4]==3)) {
 			 $showExamen = true;						?>
-			<div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="float description1"></label>
+			<div class="field"  ><label  class="float description1"></label>
 				<span sytle="font-weight:normal">Opci&oacute;n:&nbsp;</span></span><strong>Especial preparatorio para examen oficial para j&oacute;venes y adultos a partir de 13/14 a&ntilde;os.</strong></div>
 	 <?php } else 
 			$showExamen = false;*/ ?>
 
-            <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="float required description1" for="obsidioma#index#">Observaciones con respecto al nivel en este idioma  </label> <strong><?php $key='obsidioma'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+            <div class="field"  ><label  class="float required description1" for="obsidioma#index#">Observaciones con respecto al nivel en este idioma  </label> <strong><?php $key='obsidioma'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
-            <div id="cursos<?php echo $hijostr+1; ?>" style="padding-left:10px;padding-top:5px;">
+            <div id="cursos<?php echo $hijostr+1; ?>" >
             <label  class="required description1"> El curso completo del alumno/a </label>
             <table class="table table-striped showtable">
               <thead>
@@ -309,7 +309,7 @@ echo "</pre><hr>";
 
 				$gesamthijo=$prize;
 
-		        echo "<tr><td colspan='3' align=\"left\" style='font-size:larger;'>Precio final  <strong>$prizetext</strong></td></tr>";
+		        echo "<tr><td colspan='3' align=\"center\" class=\"prizetotal\">Precio final  <strong>$prizetext</strong></td></tr>";
 					 //&nbsp;&nbsp;(Primer pago:&nbsp;260 Euros el d&iacute;a de la inscripci&oacute;n, o unos d&iacute;as antes o despu&eacute;s de la misma. $segundopagotext)</td></tr>";
 		  		?>
 			</tbody></table>
@@ -323,6 +323,6 @@ echo "</pre><hr>";
 
 <div class="legend">C&oacute;mo han conocido nuestra oferta de los campus de verano en  alem&aacute;n, ingl&eacute;s o franc&eacute;s en el Colegio Alem&aacute;n:</div>
 
-  <div class="field" style="padding-left:10px;padding-top:5px;clear:both;border-bottom: solid 1px silver;">
+  <div class="field" style="clear:both;border-bottom: solid 1px silver;">
         <span style="padding-left:26px" id="infoKursFundort" name="infoKursFundort"><?php echo strip_tags($POSTsane['infoKursFundort']);?></span>
   </div>
