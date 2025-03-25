@@ -101,7 +101,10 @@ $stylekidlabrequired = ' style="margin-top:035em;padding:0.15em;display: inline;
   <span <?php echo $stylelabrequired; ?>>Bus vuelta </span>
   <strong><?php echo strip_tags($POSTsaneEmail['Busvuelta']) ?></strong>
 </div>
-
+<div <?php echo $stylelabmargin; ?>>
+  <span <?php echo $stylelabrequired; ?>>Bus vuelta </span>
+  <strong><?php echo strip_tags($POSTsaneEmail['Busvuelta2']) ?></strong>
+</div>
 <div <?php echo $stylemainlegend; ?>>Alumno/a:</div>
 
 <?php
@@ -356,7 +359,7 @@ if (array_key_exists($key, $POSTsaneEmail)) {
         //Preisberechnung Discounts 2024	 
         $preis = 1.0 * $prize;
 
-        $discount1active = ($wochenanzahl == 5); //Mehrere Wochen	   
+        $discount1active = ($wochenanzahl == 4); //Mehrere Wochen	   
         $discount2active = ($colegio == "DSB"); //DSB sch�ler
         $discount3active = isEarlyBird(); //Early Bird
 

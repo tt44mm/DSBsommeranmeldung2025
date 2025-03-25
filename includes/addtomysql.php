@@ -259,7 +259,7 @@ if ($sendemail) //ToDo wieder 1
    			$colegio=cleanstr($mysqlconnection, trim($POSTARRAY['colegio'.$nr]));	   
             $preis=1.0 * $prize;	   
 //----------------------------------------------------------------
-	        $discount1active=($wochenanzahl==5);//Mehrere Wochen	   
+	        $discount1active=($wochenanzahl==4);//Mehrere Wochen	   
 	        $discount2active=($colegio=="DSB");//DSB sch�ler
 	        $discount3active=isEarlyBird(); //Early Bird
 

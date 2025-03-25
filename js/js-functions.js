@@ -89,12 +89,17 @@ function weekclick(indexstr) {
 
     // Preisberechnungen durchführen
     let week1, week2, week3, week4, week5, allweeks;
+    let nodsb_week1, nodsb_week2, nodsb_week3, nodsb_week4, nodsb_week5, nodsb_allweeks;
     let vorjuni = isEarlyBird();
     let isDSBStudent = document.getElementById('dsb0_1') && document.getElementById('dsb0_1').checked;
 
     // Preise je nach Schülertyp und Early-Bird festlegen
     // Diese Werte müssen aus PHP dynamisch eingesetzt werden - hier nur als Platzhalter
+
+    let descuentos = "";
+
     if (isDSBStudent) {
+        descuentos = "alumno/a DSB ";
         if (vorjuni) {
             // Preise für DSB-Schüler mit Early-Bird Rabatt
             week1 = cursoprecio_1_2; // Diese Variablen müssen aus PHP kommen
@@ -103,6 +108,14 @@ function weekclick(indexstr) {
             week4 = cursoprecio_4_2;
             week5 = cursoprecio_5_2;
             allweeks = cursoprecio_6_2;
+
+            nodsb_week1 = cursoprecio_1_1;
+            nodsb_week2 = cursoprecio_2_1;
+            nodsb_week3 = cursoprecio_3_1;
+            nodsb_week4 = cursoprecio_4_1;
+            nodsb_week5 = cursoprecio_5_1;
+            nodsb_allweeks = cursoprecio_1_1+cursoprecio_2_1+cursoprecio_3_1+cursoprecio_4_1+cursoprecio_5_1;
+
         } else {
             // Normale Preise für DSB-Schüler
             week1 = cursoprecio_1_4;
@@ -111,6 +124,13 @@ function weekclick(indexstr) {
             week4 = cursoprecio_4_4;
             week5 = cursoprecio_5_4;
             allweeks = cursoprecio_6_4;
+
+            nodsb_week1 = cursoprecio_1_3;
+            nodsb_week2 = cursoprecio_2_3;
+            nodsb_week3 = cursoprecio_3_3;
+            nodsb_week4 = cursoprecio_4_3;
+            nodsb_week5 = cursoprecio_5_3;
+            nodsb_allweeks = cursoprecio_1_3 + cursoprecio_2_3 + cursoprecio_3_3 + cursoprecio_4_3 + cursoprecio_5_3;
         }
     } else {
         if (vorjuni) {
@@ -131,6 +151,8 @@ function weekclick(indexstr) {
             allweeks = cursoprecio_6_3;
         }
     }
+
+
 
     // Aktualisiere die Labels für die Wochen mit den korrekten Preisen
     const labWeek1 = document.getElementById('labweek1');
@@ -161,7 +183,7 @@ function weekclick(indexstr) {
     // Berechne den Gesamtpreis
     let sumprecio = 0;
     let fullprice = 0;
-    let descuentos = "";
+    let nodsb_sumprecio = 0;
 
     // Addiere die Preise für die ausgewählten Wochen
     if (document.getElementById('curso0-1') && document.getElementById('curso0-1').checked) sumprecio += week1;
@@ -169,6 +191,15 @@ function weekclick(indexstr) {
     if (document.getElementById('curso0-3') && document.getElementById('curso0-3').checked) sumprecio += week3;
     if (document.getElementById('curso0-4') && document.getElementById('curso0-4').checked) sumprecio += week4;
     if (document.getElementById('curso0-5') && document.getElementById('curso0-5').checked) sumprecio += week5;
+
+    if (isDSBStudent) {
+        if (document.getElementById('curso0-1') && document.getElementById('curso0-1').checked) nodsb_sumprecio += nodsb_week1;
+        if (document.getElementById('curso0-2') && document.getElementById('curso0-2').checked) nodsb_sumprecio += nodsb_week2;
+        if (document.getElementById('curso0-3') && document.getElementById('curso0-3').checked) nodsb_sumprecio += nodsb_week3;
+        if (document.getElementById('curso0-4') && document.getElementById('curso0-4').checked) nodsb_sumprecio += nodsb_week4;
+        if (document.getElementById('curso0-5') && document.getElementById('curso0-5').checked) nodsb_sumprecio += nodsb_week5;
+    }
+    let dsbdifference = nodsb_sumprecio - sumprecio;
 
     // Rabatt für Auswahl aller Wochen
     const allWeeksSelected = 
@@ -181,11 +212,22 @@ function weekclick(indexstr) {
     if (allWeeksSelected) {
         fullprice = sumprecio;
         sumprecio = allweeks;
+        let descuentoall = "todos las semanas";
+        if (isDSBStudent) {
+            descuentos = descuentoall + ", " + descuentos;
+        } else {
+            descuentos = descuentoall;
+        }
     } else {
         fullprice = sumprecio;
     }
 
-    const difference = fullprice - sumprecio;
+    let difference=0;
+    if (isDSBStudent) { 
+        difference = nodsb_allweeks - allweeks;
+    } else {
+        difference = fullprice - sumprecio;
+    }
 
     // Addiere die Preise für die ausgewählten Optionen
     if (document.getElementById('fruehcurso0-1') && document.getElementById('fruehcurso0-1').checked) sumprecio += weekF1;
@@ -209,8 +251,14 @@ function weekclick(indexstr) {
                          "€ de descuento por " + descuentos + ")" + 
                          '<br/> <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/precios-matriculacion-pagos/" target="_new">Pol&iacute;tica de precios y descuentos</a>';
     } else {
-        precioElement.innerHTML = displayprice + "€";
-    }
+        if (isDSBStudent) {
+            precioElement.innerHTML = displayprice + "€ (precio de alumnos de DSB)";
+        } else {
+            precioElement.innerHTML = displayprice + "€";
+        }
+    } 
+
+
 }
 
 // DSB Schüler "Ja" geklickt

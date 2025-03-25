@@ -525,20 +525,45 @@ document.addEventListener('DOMContentLoaded', function() {
             // SCHRITT 1: REQUIRED CHECK - Prüfe ob Pflichtfelder ausgefüllt sind
             console.log("===== REQUIRED CHECK GESTARTET =====");
             
-            // Validiere einfache Eingabefelder
-            const requiredInputs = document.querySelectorAll('#formins input.required, #formins select.required, #formins textarea.required');
-            console.log("Gefundene Pflichtfelder (Inputs):", requiredInputs.length);
+            // Sammle alle Radio-Gruppen
+            const radioGroups = {};
+            document.querySelectorAll('input[type="radio"].required').forEach(function(radio) {
+                radioGroups[radio.name] = true;
+            });
+            
+            // Sammle alle Wochen-Checkboxen
+            const weekCheckboxIds = [];
+            document.querySelectorAll('input[name="curso0[]"]').forEach(function(checkbox) {
+                if (checkbox.id) {
+                    weekCheckboxIds.push(checkbox.id);
+                }
+            });
+            
+            // Validiere einfache Eingabefelder (ohne Radio-Buttons und ohne Wochen-Checkboxen)
+            const requiredInputs = document.querySelectorAll('#formins input.required:not([type="radio"]), #formins select.required, #formins textarea.required');
+            const filteredInputs = [];
+            
+            // Filtere Wochen-Checkboxen aus den einzeln zu validierenden Feldern heraus
+            for (let i = 0; i < requiredInputs.length; i++) {
+                const field = requiredInputs[i];
+                if (field.type === 'checkbox' && weekCheckboxIds.includes(field.id)) {
+                    continue; // überspringe Wochen-Checkboxen
+                }
+                filteredInputs.push(field);
+            }
+            
+            console.log("Gefundene Pflichtfelder (Inputs):", filteredInputs.length);
             
             // Limitiere die Anzahl der zu validierenden Felder (als Schutz)
-            const fieldsToValidate = Math.min(requiredInputs.length, 50);
+            const fieldsToValidate = Math.min(filteredInputs.length, 50);
             
             for (let i = 0; i < fieldsToValidate; i++) {
-                const field = requiredInputs[i];
+                const field = filteredInputs[i];
                 
                 // Prüfe zunächst nur auf Vorhandensein (required)
                 let isEmpty = false;
                 
-                if (field.type === 'checkbox' || field.type === 'radio') {
+                if (field.type === 'checkbox') {
                     isEmpty = !field.checked;
                 } else {
                     isEmpty = !field.value.trim();
@@ -557,11 +582,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Validiere Radio-Gruppen
-            const radioGroups = {};
-            document.querySelectorAll('input[type="radio"].required').forEach(function(radio) {
-                radioGroups[radio.name] = true;
-            });
-            
             Object.keys(radioGroups).forEach(function(groupName) {
                 const radios = document.querySelectorAll('input[name="' + groupName + '"]');
                 if (radios.length > 0) {
@@ -573,6 +593,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             break;
                         }
                     }
+                    
+                    // Log einzelne Radio-Button-Status für Debugging
+                    radios.forEach(function(radio) {
+                        console.log(`Validierung REQUIRED für ${radio.id || radio.name}: ${radio.checked ? 'TRUE' : 'FALSE'}`);
+                    });
                     
                     const radioRequired = anyChecked;
                     console.log(`Validierung REQUIRED für Radio-Gruppe ${groupName}: ${radioRequired ? 'TRUE' : 'FALSE'}`);
@@ -597,6 +622,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 
+                // Log einzelne Checkbox-Status für Debugging
+                weekCheckboxes.forEach(function(checkbox) {
+                    console.log(`Validierung REQUIRED für ${checkbox.id || checkbox.name}: ${checkbox.checked ? 'TRUE' : 'FALSE'}`);
+                });
+                
                 const checkboxesRequired = anyChecked;
                 console.log(`Validierung REQUIRED für Wochen-Checkboxen: ${checkboxesRequired ? 'TRUE' : 'FALSE'}`);
                 
@@ -607,6 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
+            // Aktualisiere requiredValid basierend auf allen Validierungen
             console.log(`===== REQUIRED CHECK ERGEBNIS: ${requiredValid ? 'TRUE' : 'FALSE'} =====`);
             
             // SCHRITT 2: FORMAT CHECK - Prüfe spezielle Formate
@@ -687,7 +718,42 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Ausgabe der Gesamtergebnisse
             console.log("===== VALIDIERUNGSGESAMTERGEBNIS =====");
-            console.log(`REQUIRED: ${requiredValid ? 'TRUE' : 'FALSE'} | FORMAT: ${formatValid ? 'TRUE' : 'FALSE'}`);
+            
+            // Neuen Check hinzufügen: Wenn alle Gruppen valide sind und nur einzelne Wochen-Checkboxen invalide sind,
+            // dann setze requiredValid auf true
+            const allRadioGroupsValid = Object.keys(radioGroups).every(function(groupName) {
+                const radios = document.querySelectorAll('input[name="' + groupName + '"]');
+                if (radios.length > 0) {
+                    for (let i = 0; i < radios.length; i++) {
+                        if (radios[i].checked) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return true; // Wenn keine Radio-Buttons vorhanden sind, gilt die Gruppe als gültig
+            });
+            
+            const weekCheckboxesValid = (function() {
+                const checkboxes = document.querySelectorAll('input[name="curso0[]"]');
+                if (checkboxes && checkboxes.length > 0) {
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        if (checkboxes[i].checked) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return true; // Wenn keine Checkboxen vorhanden sind, gilt die Gruppe als gültig
+            })();
+            
+            // Wenn alle Gruppen gültig sind, dann setze das Gesamtergebnis auf true
+            if (allRadioGroupsValid && weekCheckboxesValid) {
+                requiredValid = true;
+                formValid = formatValid; // Gesamtergebnis hängt nur noch vom Format ab
+            }
+            
+            console.log(`REQUIRED (korrigiert): ${requiredValid ? 'TRUE' : 'FALSE'} | FORMAT: ${formatValid ? 'TRUE' : 'FALSE'}`);
             console.log(`Gesamtergebnis der Formularvalidierung: ${formValid ? 'TRUE' : 'FALSE'}`);
         } catch (e) {
             console.error("Fehler bei der Formularvalidierung:", e);

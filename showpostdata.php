@@ -18,7 +18,7 @@ function sanitize($input)
 
 $POSTsane = sanitize($_POST);
 
-/*
+/*	
 echo "<pre>"; 
 print_r($POSTsane);
 echo "</pre><hr>"; 
@@ -49,10 +49,12 @@ echo "</pre><hr>";
         <div class="legend">Transporte gratis:</div>
 
         <div class="field"  style="padding-left:10px;padding-top:5px;"><label  class="required float" for="Busida">Bus ida  </label> <strong><?php echo strip_tags($POSTsane['Busida']) ?></strong></div>
-        <div class="field"  style="padding-left:10px;padding-top:5px;">
+
+		<div class="field"  style="padding-left:10px;padding-top:5px;">
           <label  class="required float" for="Busvuelta">Bus vuelta </label> <strong><?php echo strip_tags($POSTsane['Busvuelta']) ?></strong></div>
-        <!--<div class="field"  style="padding-left:10px;padding-top:5px;display:none">
-          <label  class="required float" for="Busvuelta2">Bus vuelta 16:15 </label> <strong><?php echo strip_tags($POSTsane['Busvuelta2']) ?></strong></div>-->
+
+        <div class="field"  style="padding-left:10px;padding-top:5px;">
+          <label  class="required float" for="Busvuelta2">Bus vuelta 16:15 </label> <strong><?php echo strip_tags($POSTsane['Busvuelta2']) ?></strong></div>
 
         <div id="hijos" class="field"  style="padding-left:0;padding-top:5px;">
             <div class="Mainlegend">Alumno/a:</div>
@@ -274,8 +276,8 @@ echo "</pre><hr>";
 				//Preisberechnung Discounts 2024
 				$preis=1.0 * $prize;
 
-				$discount1active = ($wochenanzahl == 5); //Mehrere Wochen	   
-				$discount2active = ($colegio == "DSB"); //DSB sch�ler
+				$discount1active = ($wochenanzahl == 4); //Mehrere Wochen	   
+				$discount2active = ($colegio == "DSB"); //DSB schüler
 				$discount3active = isEarlyBird(); //Early Bird
 
 				$discountactive[1] = $discount1active;
