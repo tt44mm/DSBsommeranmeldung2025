@@ -86,6 +86,11 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Referenzen zu den Validierungsfunktionen aus js-functions.js
+    const validatePLZFunc = window.validatePLZ || function() { return true; };
+    const validatePhoneFunc = window.validatePhone || function() { return true; };
+    const validateAgeFunc = window.validateAge || function() { return true; };
+    
     // Definiere die Validierungsregeln für verschiedene Felder
     const validationRules = {
         // Allgemeine Regeln
@@ -542,13 +547,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Spezialbehandlung für Radio-Buttons und Checkboxen
         if (field.type === 'radio' || field.type === 'checkbox') {
-            // Für Radio-Buttons und Checkboxen verwenden wir den Namen
             selector = '.validationerror[data-for="' + field.name + '"]';
         } else if (field.id) {
-            // Standard-Felder mit ID
             selector = '.validationerror[data-for="' + field.id + '"]';
         } else {
-            // Felder ohne ID
             selector = '.validationerror[data-for="' + field.name + '"]';
         }
         
@@ -788,9 +790,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Validiere das Geburtsdatum und Alter
             const birthdateField = document.getElementById('birthdate0');
             if (birthdateField && birthdateField.value.trim()) {
-                // Verwende die existierende validateAge-Funktion aus js-functions.js
-                if (typeof validateAge === 'function') {
-                    const ageResult = validateAge(birthdateField);
+                // Verwende die existierende validateAgeFunc-Funktion aus js-functions.js
+                if (typeof validateAgeFunc === 'function') {
+                    const ageResult = validateAgeFunc(birthdateField);
                     console.log(`Validierung SPEZIAL für birthdate0 (Alter): ${ageResult ? 'TRUE' : 'FALSE'}`);
                     
                     if (!ageResult) {
@@ -799,7 +801,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Fehlermeldung wird durch validateAge gesetzt
                     }
                 } else {
-                    console.error('validateAge Funktion nicht gefunden - Altersvalidierung übersprungen');
+                    console.error('validateAgeFunc Funktion nicht gefunden - Altersvalidierung übersprungen');
                 }
             }
             
@@ -903,6 +905,44 @@ document.addEventListener('DOMContentLoaded', function() {
     // Focus- und Blur-Events für alle Formularfelder
     const formFields = document.querySelectorAll('#formins input, #formins select, #formins textarea');
     formFields.forEach(function(field) {
+        // Füge input-Event-Listener für spezielle Felder hinzu
+        if ((field.id === 'PLZ' || field.id === 'Phone' || field.id === 'phone0') && field.type === 'text') {
+            field.addEventListener('input', function() {
+                try {
+                    // Rufe die entsprechende Validierungsfunktion auf
+                    if (field.id === 'PLZ' && typeof validatePLZFunc === 'function') {
+                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                        if (field.classList.contains('required') && field.value.trim() === '') {
+                            showError(field, 'Dieses Feld ist erforderlich.');
+                        } else {
+                            // Vor der Validierung den error-Status entfernen
+                            field.classList.remove('error');
+                            const result = validatePLZFunc(field);
+                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                            if (result && field.value.trim() !== '') {
+                                field.classList.add('valid');
+                            }
+                        }
+                    } else if ((field.id === 'Phone' || field.id === 'phone0') && typeof validatePhoneFunc === 'function') {
+                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                        if (field.classList.contains('required') && field.value.trim() === '') {
+                            showError(field, 'Dieses Feld ist erforderlich.');
+                        } else {
+                            // Vor der Validierung den error-Status entfernen
+                            field.classList.remove('error');
+                            const result = validatePhoneFunc(field);
+                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                            if (result && field.value.trim() !== '') {
+                                field.classList.add('valid');
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Fehler im Input-Event:", e);
+                }
+            });
+        }
+        
         // Bei Focus: Fehlermeldung ausblenden
         field.addEventListener('focus', function() {
             try {
@@ -930,8 +970,54 @@ document.addEventListener('DOMContentLoaded', function() {
         // Bei Blur: Wenn Pflichtfeld, validieren und ggf. Fehlermeldung oder grünen Haken anzeigen
         field.addEventListener('blur', function() {
             try {
-                // Validiere das Feld
-                validateField(field);
+                // Spezielle Validierungsfunktionen für bestimmte Felder aufrufen
+                if (field.id === 'PLZ' && typeof validatePLZFunc === 'function') {
+                    // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                    if (field.classList.contains('required') && field.value.trim() === '') {
+                        showError(field, 'Dieses Feld ist erforderlich.');
+                    } else {
+                        // Vor der Validierung den error-Status entfernen
+                        field.classList.remove('error');
+                        const result = validatePLZFunc(field);
+                        // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                        if (result && field.value.trim() !== '') {
+                            field.classList.add('valid');
+                        }
+                    }
+                } else if ((field.id === 'Phone' || field.id === 'phone0') && typeof validatePhoneFunc === 'function') {
+                    // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                    if (field.classList.contains('required') && field.value.trim() === '') {
+                        showError(field, 'Dieses Feld ist erforderlich.');
+                    } else {
+                        // Vor der Validierung den error-Status entfernen
+                        field.classList.remove('error');
+                        const result = validatePhoneFunc(field);
+                        // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                        if (result && field.value.trim() !== '') {
+                            field.classList.add('valid');
+                        }
+                    }
+                } else if (field.id === 'birthdate0' && typeof validateAgeFunc === 'function') {
+                    // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                    if (field.classList.contains('required') && field.value.trim() === '') {
+                        showError(field, 'Dieses Feld ist erforderlich.');
+                    } else {
+                        // Vor der Validierung den error-Status entfernen
+                        field.classList.remove('error');
+                        const result = validateAgeFunc(field);
+                        // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                        if (result && field.value.trim() !== '') {
+                            field.classList.add('valid');
+                        }
+                    }
+                } else {
+                    // Standardvalidierung für alle anderen Felder
+                    const result = validateField(field);
+                    // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                    if (result && field.value.trim() !== '') {
+                        field.classList.add('valid');
+                    }
+                }
                 
                 // Zeige Fehlermeldungen wieder an, wenn vorhanden
                 let selector;
@@ -949,23 +1035,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 errors.forEach(function(error) {
                     error.style.display = 'block';
                 });
-                
-                // Wenn kein Fehler und Pflichtfeld, zeige grünen Haken
-                if (!field.classList.contains('error') && field.classList.contains('required')) {
-                    if (field.type === 'checkbox' || field.type === 'radio') {
-                        // Für Checkboxen und Radio-Buttons verwenden wir data-attribute statt Klassen,
-                        // unabhängig davon ob sie checked sind oder nicht
-                        if (field.checked) {
-                            field.setAttribute('data-validation-state', 'valid');
-                        } else {
-                            // Auch für unchecked Checkboxen setzen wir ein Attribut, um konsistente Größe zu gewährleisten
-                            field.setAttribute('data-validation-state', 'unchecked');
-                        }
-                    } else if (field.type !== 'checkbox' && field.type !== 'radio' && 
-                               field.value && typeof field.value === 'string' && field.value.trim() !== '') {
-                        field.classList.add('valid');
-                    }
-                }
             } catch (e) {
                 console.error("Fehler im Blur-Event:", e);
             }

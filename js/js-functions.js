@@ -592,47 +592,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Validierung für Felder hinzufügen
-    const plzInput = document.getElementById('PLZ');
-    if (plzInput) {
-        plzInput.addEventListener('input', function() {
-            validatePLZ(this);
-        });
-        plzInput.addEventListener('blur', function() {
-            validatePLZ(this);
-        });
-    }
-    
-    const phoneInput = document.getElementById('Phone');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function() {
-            validatePhone(this);
-        });
-        phoneInput.addEventListener('blur', function() {
-            validatePhone(this);
-        });
-    }
-    
-    const phone0Input = document.getElementById('phone0');
-    if (phone0Input) {
-        phone0Input.addEventListener('input', function() {
-            validatePhone(this);
-        });
-        phone0Input.addEventListener('blur', function() {
-            validatePhone(this);
-        });
-    }
-
-    // Initialisiere Altersvalidierung
-    const birthdateInput = document.getElementById('birthdate0');
-    if (birthdateInput) {
-        birthdateInput.addEventListener('blur', function() {
-            validateAge(this);
-        });
-        birthdateInput.addEventListener('change', function() {
-            validateAge(this);
-        });
-    }
+    // Die Event-Listener für die Validierungsfunktionen wurden entfernt,
+    // da diese jetzt von pure-validation.js verwaltet werden.
+    // Die Validierungsfunktionen selbst bleiben unverändert.
     
     // Initialisiere Preisanzeige
     weekclick('1');
