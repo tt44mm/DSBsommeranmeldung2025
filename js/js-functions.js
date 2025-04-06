@@ -182,7 +182,7 @@ function weekclick(indexstr) {
     if (labWeek3) labWeek3.innerHTML = weekLabel3 + week3 + '€)';
     if (labWeek4) labWeek4.innerHTML = weekLabel4 + week4 + '€)';
     if (labWeek5) labWeek5.innerHTML = weekLabel5 + week5 + '€)';
-
+            
     // Optionspreise (bleiben gleich, unabhängig vom Schülertyp)
     const weekF1 = fruehcursoprecio_1;
     const weekF2 = fruehcursoprecio_2;
@@ -200,6 +200,8 @@ function weekclick(indexstr) {
     let sumprecio = 0;
     let fullprice = 0;
     let nodsb_sumprecio = 0;
+    let difference=0;
+
 
     // Addiere die Preise für die ausgewählten Wochen
     if (document.getElementById('curso0-1') && document.getElementById('curso0-1').checked) sumprecio += week1;
@@ -214,9 +216,10 @@ function weekclick(indexstr) {
         if (document.getElementById('curso0-3') && document.getElementById('curso0-3').checked) nodsb_sumprecio += nodsb_week3;
         if (document.getElementById('curso0-4') && document.getElementById('curso0-4').checked) nodsb_sumprecio += nodsb_week4;
         if (document.getElementById('curso0-5') && document.getElementById('curso0-5').checked) nodsb_sumprecio += nodsb_week5;
-    }
+            }
     let dsbdifference = nodsb_sumprecio - sumprecio;
-
+    difference = dsbdifference;
+            
     // Rabatt für Auswahl aller Wochen
     const allWeeksSelected = 
         document.getElementById('curso0-1') && document.getElementById('curso0-1').checked &&
@@ -234,16 +237,14 @@ function weekclick(indexstr) {
         } else {
             descuentos = descuentoall;
         }
+        if (isDSBStudent) { 
+            dsbdifference = nodsb_allweeks - allweeks;
+        } 
     } else {
         fullprice = sumprecio;
     }
 
-    let difference=0;
-    if (isDSBStudent) { 
-        difference = nodsb_allweeks - allweeks;
-    } else {
-        difference = fullprice - sumprecio;
-    }
+    difference = fullprice - sumprecio;
 
     // Addiere die Preise für die ausgewählten Optionen
     if (document.getElementById('fruehcurso0-1') && document.getElementById('fruehcurso0-1').checked) sumprecio += weekF1;
@@ -262,20 +263,28 @@ function weekclick(indexstr) {
     const displayprice = sumprecio.toLocaleString('de-DE', options);
     const precioElement = document.getElementById('precio');
 
-    if (difference > 0) {
-        precioElement.innerHTML = displayprice + "€ (aplicados " + difference.toLocaleString('de-DE', options) + 
-                         "€ de descuento por " + descuentos + ")" + 
-                         '<br/> <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/precios-matriculacion-pagos/" target="_new">Política de precios y descuentos</a>';
+    if (difference > 0 || dsbdifference > 0) {
+        if (isDSBStudent) {
+            precioElement.innerHTML = displayprice + "€ (aplicados " + dsbdifference.toLocaleString('de-DE', options) + 
+                            "€ de descuento por " + descuentos + ")" + 
+                            '<br/> <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/precios-matriculacion-pagos/" target="_new">Política de precios y descuentos</a>';
+        } else {
+            precioElement.innerHTML = displayprice + "€ (aplicados " + difference.toLocaleString('de-DE', options) + 
+                            "€ de descuento por " + descuentos + ")" + 
+                            '<br/> <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/precios-matriculacion-pagos/" target="_new">Política de precios y descuentos</a>';
+        }
+
     } else {
         if (isDSBStudent) {
             precioElement.innerHTML = displayprice + "€ (precio de alumnos de DSB)";
         } else {
             precioElement.innerHTML = displayprice + "€";
-        }
-    } 
-
+    }
+    }
 
 }
+
+
 
 // DSB Schüler "Ja" geklickt
 function dsbclicksi(indexstr) {
@@ -356,8 +365,6 @@ function showValidationError(field, message) {
     const existingError = field.parentNode.querySelector('.validationerror');
     if (existingError) {
         existingError.textContent = message;
-        existingError.style.display = 'block';
-        console.log('Existierende Fehlermeldung aktualisiert');
         return;
     }
     
@@ -375,6 +382,12 @@ function showValidationError(field, message) {
     // Setze eine visuelle Markierung am Feld
     field.classList.add('validationinvalid');
     field.style.borderColor = 'red';
+    
+    // Hinzufügen der 'error'-Klasse für die Kompatibilität mit pure-validation.js
+    field.classList.add('error');
+    
+    // Entfernen der 'valid'-Klasse falls sie vorhanden ist
+    field.classList.remove('valid');
     
     console.log('Neue Fehlermeldung hinzugefügt');
 }
@@ -432,13 +445,13 @@ function validateAge(input) {
     console.log('Berechnetes Alter:', age, 'Jahre');
     
     // Überprüfe, ob das Alter im gültigen Bereich liegt
-    const isValidAge = age >= 2 && age <= 19;
-    console.log('Ist Alter gültig (2-19 Jahre)?', isValidAge);
+    const isValidAge = age >= 1 && age <= 85;
+    console.log('Ist Alter gültig (1-85 Jahre)?', isValidAge);
     
     if (!isValidAge) {
         const message = age < 2 ? 
-            "El alumno/a es demasiado joven (debe tener al menos 2 años)." :
-            "El alumno/a es demasiado mayor (debe tener menos de 19 años).";
+            "El alumno/a es demasiado joven (debe tener al menos 1 año el 1 de enero este año)." :
+            "El alumno/a es demasiado mayor (debe tener menos de 85 años).";
         
         showAgeError(input, message);
         
@@ -447,11 +460,11 @@ function validateAge(input) {
         const altElement = document.getElementById('ALT');
         
         if (age < 2) {
-            if (jungElement) jungElement.style.display = 'block';
+            if (jungElement) jungElement.style.display = 'inline';
             if (altElement) altElement.style.display = 'none';
         } else {
             if (jungElement) jungElement.style.display = 'none';
-            if (altElement) altElement.style.display = 'block';
+            if (altElement) altElement.style.display = 'inline';
         }
         
         return false;

@@ -40,44 +40,44 @@ $kurseinheiten_plural = "semanas";
 $cursoinscrpcion = 0;
 
 //EXTERN Early
-$cursoprecio[1][1] = 240;
-$cursoprecio[2][1] = 240;
-$cursoprecio[3][1] = 240;
-$cursoprecio[4][1] = 240;
+$cursoprecio[1][1] = 235;
+$cursoprecio[2][1] = 235;
+$cursoprecio[3][1] = 235;
+$cursoprecio[4][1] = 200;
 $cursoprecio[5][1] = 0;
-$cursoprecio[6][1] = 825; //5Wochenkomplett
+$cursoprecio[6][1] = 885; //4Wochenkomplett
 //DSB Early
-$cursoprecio[1][2] = 190;
-$cursoprecio[2][2] = 190;
-$cursoprecio[3][2] = 190;
-$cursoprecio[4][2] = 190;
+$cursoprecio[1][2] = 195;
+$cursoprecio[2][2] = 195;
+$cursoprecio[3][2] = 195;
+$cursoprecio[4][2] = 170;
 $cursoprecio[5][2] = 0;
-$cursoprecio[6][2] = 625; //5Wochenkomplett
+$cursoprecio[6][2] = 695; //5Wochenkomplett
 //EXTERN Late
-$cursoprecio[1][3] = 255;
-$cursoprecio[2][3] = 255;
-$cursoprecio[3][3] = 255;
-$cursoprecio[4][3] = 255;
+$cursoprecio[1][3] = 250;
+$cursoprecio[2][3] = 250;
+$cursoprecio[3][3] = 250;
+$cursoprecio[4][3] = 200;
 $cursoprecio[5][3] = 0;
-$cursoprecio[6][3] = 1020; //5Wochenkomplett
+$cursoprecio[6][3] = 950; //5Wochenkomplett
 //DSB Late
-$cursoprecio[1][4] = 200;
-$cursoprecio[2][4] = 200;
-$cursoprecio[3][4] = 200;
-$cursoprecio[4][4] = 200;
+$cursoprecio[1][4] = 205;
+$cursoprecio[2][4] = 205;
+$cursoprecio[3][4] = 205;
+$cursoprecio[4][4] = 180;
 $cursoprecio[5][4] = 0;
 $cursoprecio[6][4] = 800; //5Wochenkomplett
 
-$fruehcursoprecio[1] = 45;
-$fruehcursoprecio[2] = 45;
-$fruehcursoprecio[3] = 45;
-$fruehcursoprecio[4] = 45;
+$fruehcursoprecio[1] = 40;
+$fruehcursoprecio[2] = 40;
+$fruehcursoprecio[3] = 40;
+$fruehcursoprecio[4] = 30;
 $fruehcursoprecio[5] = 0;
 
-$mittagcursoprecio[1] = 85;
-$mittagcursoprecio[2] = 85;
-$mittagcursoprecio[3] = 85;
-$mittagcursoprecio[4] = 85;
+$mittagcursoprecio[1] = 95;
+$mittagcursoprecio[2] = 95;
+$mittagcursoprecio[3] = 95;
+$mittagcursoprecio[4] = 80;
 $mittagcursoprecio[5] = 0;
 
 $discountnames[1] = "todas las semanas";
