@@ -724,38 +724,16 @@ span.infomobil {display:none;}
   td label:nth-of-type(2).dsbcheckbox span {padding-top:0; }
   td label:nth-of-type(3).dsbcheckbox span {padding-top:0; }
 
-  td label:nth-of-type(1).dsbcheckbox  > input:checked + span::before	
-	{
-		content: '\2713';
-		left: 0.15rem;
-		top: 2px;
-	}
-	
-	
-  td label:nth-of-type(2).dsbcheckbox  > input:checked + span::before, 
-  td label:nth-of-type(3).dsbcheckbox  > input:checked + span::before	
-	{
-		content: '\2713';
-		left: 0.15rem;
-		top: 0rem;
-	}
-	
-	/*
-  td:nth-of-type(1):before { content: " "; }
-  td:nth-of-type(2):before { content: "Cuales "; }
-  td:nth-of-type(3):before { content: " "; }
-  td:nth-of-type(4):before { content: " ";}	
-	
-  table.showtable td:nth-of-type(1):before {padding-right: 0.1em; content: " "; }
-  table.showtable td:nth-of-type(1) { display:inline-block}	
-  table.showtable td:nth-of-type(2):before {padding-left: 1em;padding-right: 0.1em; content: " "; }
-  table.showtable td:nth-of-type(2) { display:inline-block}	
-  table.showtable td:nth-of-type(3):before { content: "Coste "; }
-  table.showtable td:nth-of-type(4):before { content: "Coste guarderia 7:30 ";}
-  table.showtable td:nth-of-type(5):before { content: "Coste comedor y tardes ";}	
-  span.nottable {display: inline;}
-  */
-	
+  td label:nth-of-type(1) {margin-top:0.5em;margin-bottom:0;line-height:1.05; }
+  td label:nth-of-type(2) {margin-top:0.25em;margin-bottom:0;line-height:1.05; }
+  td label:nth-of-type(3) {margin-left:1em;;margin-bottom:0;line-height:1.05 }	
+  td label:nth-of-type(1) input {margin-top:4px;padding:0 }
+  td label:nth-of-type(1).dsbcheckbox span {padding-top:4px; }
+  td label:nth-of-type(2) input {margin-top:2px;padding:0 }
+  td label:nth-of-type(3) input {margin-top:0;padding:0;}	
+  td label:nth-of-type(2).dsbcheckbox span {padding-top:0; }
+  td label:nth-of-type(3).dsbcheckbox span {padding-top:0; }
+
   textarea.medium {
 	  width: 95%;
 	  height: 5em;
@@ -788,3 +766,121 @@ span.infomobil {display:none;}
 	
 }
 
+/* CHECKBOX UND RADIO RESET - MOBILE UND DESKTOP */
+input[type="checkbox"], 
+input[type="radio"] {
+    /* Grundlegende Eingenschaften */
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 3px !important;
+    vertical-align: middle !important;
+}
+
+input[type="checkbox"] {
+    /* Native Checkbox-Darstellung */
+    -webkit-appearance: checkbox !important;
+    -moz-appearance: checkbox !important;
+    appearance: checkbox !important;
+    border-radius: 0 !important;
+    accent-color: var(--colorHex-dsbBlue) !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+input[type="radio"] {
+    /* Native Radio-Darstellung */
+    -webkit-appearance: radio !important;
+    -moz-appearance: radio !important;
+    appearance: radio !important;
+    border-radius: 50% !important;
+    accent-color: var(--colorHex-dsbBlue) !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+/* VERHINDERN VON PSEUDO-ELEMENTEN */
+input[type="checkbox"]::before,
+input[type="checkbox"]::after,
+input[type="radio"]::before,
+input[type="radio"]::after,
+.dsbcheckbox input[type="checkbox"]::before,
+.dsbcheckbox input[type="checkbox"]::after,
+.dsbcheckbox span::before,
+.dsbcheckbox span::after {
+    display: none !important;
+    content: none !important;
+}
+
+@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+    /* SPEZIELLE MOBILE ANPASSUNGEN */
+    input[type="checkbox"], 
+    input[type="radio"] {
+        margin: 3px !important;
+        vertical-align: middle !important;
+    }
+    
+    td label {
+        display: flex !important;
+        align-items: center !important;
+        line-height: 1.25 !important;
+    }
+    
+    td label input[type="checkbox"],
+    td label input[type="radio"] {
+        flex-shrink: 0 !important;
+        margin-right: 0.5em !important;
+    }
+    
+    /* Korrektur der dsbcheckbox Klasse */
+    td label.dsbcheckbox {
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    td label.dsbcheckbox span {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+}
+
+/* Checkbox Styling für die dsbcheckbox-Klasse */
+.dsbcheckbox input[type="checkbox"] {
+  appearance: checkbox !important;
+  -webkit-appearance: checkbox !important;
+  -moz-appearance: checkbox !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 0 !important;
+  accent-color: var(--colorHex-dsbBlue) !important;
+  margin: 3px !important;
+  vertical-align: middle !important;
+}
+
+/* Radio Button Styling */
+input[type="radio"] {
+  appearance: radio !important;
+  -webkit-appearance: radio !important;
+  -moz-appearance: radio !important;
+  accent-color: var(--colorHex-dsbBlue) !important;
+}
+
+/* Verbesserung der dsbcheckbox Darstellung */
+.dsbcheckbox {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.dsbcheckbox span {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin-left: 5px !important;
+}
+
+/* Verhinderung von doppelten Haken */
+.dsbcheckbox input[type="checkbox"]::before,
+.dsbcheckbox input[type="checkbox"]::after,
+.dsbcheckbox span::before,
+.dsbcheckbox span::after {
+  content: none !important;
+  display: none !important;
+}

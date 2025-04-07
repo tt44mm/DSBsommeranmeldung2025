@@ -6,6 +6,13 @@
  * - Diese Datei: Komplexes Formular-Validierungssystem
  * - js-functions.js: UI-Funktionen und einfache Feld-Validierungen
  *
+ * VERWENDETE FUNKTIONEN AUS js-functions.js:
+ * - validatePLZ: Validierung der Postleitzahl
+ * - validatePhone: Validierung der Telefonnummern
+ * - validateAge: Validierung des Alters anhand des Geburtsdatums
+ * - createErrorElement: Erstellen von Fehlermeldungselementen
+ * - removeErrorElement: Entfernen von Fehlermeldungen
+ *
  * HINWEIS ZUR FUNKTIONSAUFTEILUNG:
  * Das validationRules-Objekt enthält Validierungsregeln, die teilweise
  * auch als eigenständige Funktionen in js-functions.js implementiert sind.
@@ -84,6 +91,103 @@
  *   Vereinfachte Version der submitclick-Funktion auf globaler Ebene.
  *   Wird beim Klick auf den Submit-Button aufgerufen, um die Validierung zu starten.
  */
+
+/**
+ * Zentrale Registry für Event-Listener
+ * Verwaltet die Registrierung, Deregistrierung und Dokumentation von Event-Listenern
+ * 
+ * Vorteile:
+ * - Zentrale Dokumentation aller Event-Listener
+ * - Vermeidung von doppelten Registrierungen
+ * - Einfachere Wartung und Fehlersuche
+ */
+const EventRegistry = {
+    // Speichert alle registrierten Event-Listener
+    listeners: [],
+    
+    // Registriert einen neuen Event-Listener
+    addListener: function(selector, eventType, callback, description) {
+        // Elemente finden
+        const elements = document.querySelectorAll(selector);
+        
+        // Listener hinzufügen
+        elements.forEach(function(element) {
+            element.addEventListener(eventType, callback);
+            
+            // Listener in der Registry speichern
+            this.listeners.push({
+                element: element,
+                selector: selector,
+                eventType: eventType,
+                callback: callback,
+                description: description
+            });
+        }, this);
+        
+        return this; // Für Method-Chaining
+    },
+    
+    // Registriert einen Event-Listener für ein einzelnes Element
+    addListenerToElement: function(element, eventType, callback, description) {
+        if (!element) return this;
+        
+        // Listener hinzufügen
+        element.addEventListener(eventType, callback);
+        
+        // Generiere einen beschreibenden Selektor
+        let selector = element.id ? '#' + element.id : 
+                      (element.className ? '.' + element.className.replace(/ /g, '.') : 
+                      (element.name ? '[name="' + element.name + '"]' : 'unknown'));
+        
+        // Listener in der Registry speichern
+        this.listeners.push({
+            element: element,
+            selector: selector,
+            eventType: eventType,
+            callback: callback,
+            description: description
+        });
+        
+        return this; // Für Method-Chaining
+    },
+    
+    // Entfernt einen Event-Listener
+    removeListener: function(selector, eventType, callback) {
+        // Passende Listener finden und entfernen
+        this.listeners = this.listeners.filter(function(listener) {
+            if (listener.selector === selector && 
+                listener.eventType === eventType && 
+                (callback === undefined || listener.callback === callback)) {
+                // Event-Listener vom Element entfernen
+                listener.element.removeEventListener(listener.eventType, listener.callback);
+                return false; // Aus der Liste entfernen
+            }
+            return true; // In der Liste behalten
+        });
+        
+        return this; // Für Method-Chaining
+    },
+    
+    // Listet alle registrierten Event-Listener auf
+    listListeners: function() {
+        return this.listeners.map(function(listener) {
+            return {
+                selector: listener.selector,
+                eventType: listener.eventType,
+                description: listener.description
+            };
+        });
+    },
+    
+    // Entfernt alle Event-Listener
+    removeAll: function() {
+        this.listeners.forEach(function(listener) {
+            listener.element.removeEventListener(listener.eventType, listener.callback);
+        });
+        this.listeners = [];
+        return this;
+    }
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     // Referenzen zu den Validierungsfunktionen aus js-functions.js
@@ -292,28 +396,41 @@ document.addEventListener('DOMContentLoaded', function() {
         // Zuerst vorhandene Fehlermeldungen für dieses Feld entfernen
         removeError(field);
         
-        // Erstelle Container für die Fehlermeldung
-        const errorContainer = document.createElement('div');
-        errorContainer.className = 'validationerror';
-        errorContainer.style.display = 'block';
-        errorContainer.style.visibility = 'visible';
-        errorContainer.style.opacity = '1';
-        
-        // Erstelle die Fehlermeldung
-        const errorMessage = document.createElement('span');
-        errorMessage.textContent = message;
-        
-        // Füge die Fehlermeldung zum Container hinzu
-        errorContainer.appendChild(errorMessage);
-        
         try {
-            // Set data-for attribute for the error container
-            if (field.type === 'radio' || field.type === 'checkbox') {
-                errorContainer.setAttribute('data-for', field.name);
-            } else if (field.id) {
-                errorContainer.setAttribute('data-for', field.id);
+            // Nutze die gemeinsame Basisfunktion aus js-functions.js für die Fehlererstellung
+            // Fallback, falls die Funktion nicht verfügbar ist
+            let errorContainer;
+            if (typeof window.createErrorElement === 'function') {
+                // Bestimme die ID oder den Namen für das data-for Attribut
+                const fieldIdentifier = (field.type === 'radio' || field.type === 'checkbox') 
+                    ? field.name 
+                    : (field.id || field.name);
+                
+                // Nutze die gemeinsame Funktion
+                errorContainer = window.createErrorElement(message, fieldIdentifier);
             } else {
-                errorContainer.setAttribute('data-for', field.name);
+                // Fallback: Direktes Erstellen des Elements, wenn die Funktion nicht verfügbar ist
+                errorContainer = document.createElement('div');
+                errorContainer.className = 'validationerror';
+                errorContainer.style.display = 'block';
+                errorContainer.style.visibility = 'visible';
+                errorContainer.style.opacity = '1';
+                
+                // Erstelle die Fehlermeldung
+                const errorMessage = document.createElement('span');
+                errorMessage.textContent = message;
+                
+                // Füge die Fehlermeldung zum Container hinzu
+                errorContainer.appendChild(errorMessage);
+                
+                // Set data-for attribute for the error container
+                if (field.type === 'radio' || field.type === 'checkbox') {
+                    errorContainer.setAttribute('data-for', field.name);
+                } else if (field.id) {
+                    errorContainer.setAttribute('data-for', field.id);
+                } else {
+                    errorContainer.setAttribute('data-for', field.name);
+                }
             }
             
             // Spezielle Behandlung basierend auf dem Feldtyp
@@ -554,13 +671,18 @@ document.addEventListener('DOMContentLoaded', function() {
             selector = '.validationerror[data-for="' + field.name + '"]';
         }
         
-        // Alle Fehlermeldungen für dieses Feld entfernen
-        const errorMessages = document.querySelectorAll(selector);
-        errorMessages.forEach(function(container) {
-            if (container && container.parentElement) {
-                container.parentElement.removeChild(container);
-            }
-        });
+        // Nutze die gemeinsame Basisfunktion, wenn verfügbar, sonst fallback
+        if (typeof window.removeErrorElement === 'function') {
+            window.removeErrorElement(selector);
+        } else {
+            // Fallback: Alle Fehlermeldungen für dieses Feld entfernen
+            const errorMessages = document.querySelectorAll(selector);
+            errorMessages.forEach(function(container) {
+                if (container && container.parentElement) {
+                    container.parentElement.removeChild(container);
+                }
+            });
+        }
         
         // Entferne Fehlerklassen oder -attribute je nach Feldtyp
         if (field.type === 'checkbox' || field.type === 'radio') {
@@ -570,27 +692,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Entferne alle Fehlermeldungen
+    // Alle Fehlermeldungen entfernen
     function removeAllErrors() {
-        // Entferne neue validationerror-Elemente
-        const allErrors = document.querySelectorAll('.validationerror');
-        allErrors.forEach(function(error) {
-            if (error.parentElement) {
-                error.parentElement.removeChild(error);
+        console.log("removeAllErrors wird aufgerufen");
+        try {
+            // Verwende die gemeinsame Basisfunktion zum Entfernen aller Fehlerelemente
+            if (typeof window.removeErrorElement === 'function') {
+                // Entferne alle Fehlerelemente
+                window.removeErrorElement('.validationerror');
+            } else {
+                // Fallback: Manuelles Entfernen aller Fehlerelemente
+                const errorContainers = document.querySelectorAll('.validationerror');
+                errorContainers.forEach(function(container) {
+                    if (container && container.parentElement) {
+                        container.parentElement.removeChild(container);
+                    }
+                });
             }
-        });
-        
-        // Entferne alle Fehlerklassen
-        const formElements = document.querySelectorAll('input, select, textarea');
-        formElements.forEach(function(element) {
-            element.classList.remove('error');
-            element.classList.remove('valid');
             
-            // Entferne auch die data-validation-state-Attribute
-            if (element.type === 'checkbox' || element.type === 'radio') {
-                element.removeAttribute('data-validation-state');
-            }
-        });
+            // Entfernen aller Fehlerklassen von allen Formular-Elementen
+            // Hier müssen wir wie in der ursprünglichen Funktion auch die 'valid'-Klasse entfernen
+            const formElements = document.querySelectorAll('input, select, textarea');
+            formElements.forEach(function(element) {
+                element.classList.remove('error');
+                element.classList.remove('valid'); // Wichtig: Auch die 'valid'-Klasse entfernen
+                
+                // Entferne auch die data-validation-state-Attribute bei Checkboxen und Radio-Buttons
+                if (element.type === 'checkbox' || element.type === 'radio') {
+                    element.removeAttribute('data-validation-state');
+                }
+            });
+        } catch (e) {
+            console.error("Fehler beim Entfernen aller Fehlermeldungen:", e);
+        }
     }
 
     // Funktion zur Validierung des gesamten Formulars
@@ -905,186 +1039,240 @@ document.addEventListener('DOMContentLoaded', function() {
     // Focus- und Blur-Events für alle Formularfelder
     const formFields = document.querySelectorAll('#formins input, #formins select, #formins textarea');
     formFields.forEach(function(field) {
-        // Füge input-Event-Listener für spezielle Felder hinzu
-        if ((field.id === 'PLZ' || field.id === 'Phone' || field.id === 'phone0') && field.type === 'text') {
-            field.addEventListener('input', function() {
-                try {
-                    // Rufe die entsprechende Validierungsfunktion auf
-                    if (field.id === 'PLZ' && typeof validatePLZFunc === 'function') {
-                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
-                        if (field.classList.contains('required') && field.value.trim() === '') {
-                            showError(field, 'Dieses Feld ist erforderlich.');
-                        } else {
-                            // Vor der Validierung den error-Status entfernen
-                            field.classList.remove('error');
-                            const result = validatePLZFunc(field);
-                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
-                            if (result && field.value.trim() !== '') {
-                                field.classList.add('valid');
-                            }
-                        }
-                    } else if ((field.id === 'Phone' || field.id === 'phone0') && typeof validatePhoneFunc === 'function') {
-                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
-                        if (field.classList.contains('required') && field.value.trim() === '') {
-                            showError(field, 'Dieses Feld ist erforderlich.');
-                        } else {
-                            // Vor der Validierung den error-Status entfernen
-                            field.classList.remove('error');
-                            const result = validatePhoneFunc(field);
-                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
-                            if (result && field.value.trim() !== '') {
-                                field.classList.add('valid');
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.error("Fehler im Input-Event:", e);
-                }
-            });
-        }
-        
+        // NEUE IMPLEMENTIERUNG MIT EVENT REGISTRY
         // Bei Focus: Fehlermeldung ausblenden
-        field.addEventListener('focus', function() {
-            try {
-                // Verstecke Fehlermeldungen
-                let selector;
-                
-                // Unterscheide zwischen verschiedenen Feldtypen
-                if (field.type === 'radio' || field.type === 'checkbox') {
-                    selector = '.validationerror[data-for="' + field.name + '"]';
-                } else if (field.id) {
-                    selector = '.validationerror[data-for="' + field.id + '"]';
-                } else {
-                    selector = '.validationerror[data-for="' + field.name + '"]';
+        EventRegistry.addListenerToElement(
+            field,
+            'focus',
+            function() {
+                try {
+                    // Verstecke Fehlermeldungen
+                    let selector;
+                    
+                    // Unterscheide zwischen verschiedenen Feldtypen
+                    if (this.type === 'radio' || this.type === 'checkbox') {
+                        selector = '.validationerror[data-for="' + this.name + '"]';
+                    } else if (this.id) {
+                        selector = '.validationerror[data-for="' + this.id + '"]';
+                    } else {
+                        selector = '.validationerror[data-for="' + this.name + '"]';
+                    }
+                    
+                    const errors = document.querySelectorAll(selector);
+                    errors.forEach(function(error) {
+                        error.style.display = 'none';
+                    });
+                } catch (e) {
+                    console.error("Fehler im Focus-Event:", e);
                 }
-                
-                const errors = document.querySelectorAll(selector);
-                errors.forEach(function(error) {
-                    error.style.display = 'none';
-                });
-            } catch (e) {
-                console.error("Fehler im Focus-Event:", e);
-            }
-        });
+            },
+            'Versteckt Fehlermeldungen beim Fokussieren des Feldes ' + (field.id || field.name)
+        );
         
         // Bei Blur: Wenn Pflichtfeld, validieren und ggf. Fehlermeldung oder grünen Haken anzeigen
-        field.addEventListener('blur', function() {
-            try {
-                // Spezielle Validierungsfunktionen für bestimmte Felder aufrufen
-                if (field.id === 'PLZ' && typeof validatePLZFunc === 'function') {
-                    // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
-                    if (field.classList.contains('required') && field.value.trim() === '') {
-                        showError(field, 'Dieses Feld ist erforderlich.');
+        EventRegistry.addListenerToElement(
+            field,
+            'blur',
+            function() {
+                try {
+                    // Spezielle Validierungsfunktionen für bestimmte Felder aufrufen
+                    if (this.id === 'PLZ' && typeof validatePLZFunc === 'function') {
+                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                        if (this.classList.contains('required') && this.value.trim() === '') {
+                            showError(this, 'Dieses Feld ist erforderlich.');
+                        } else {
+                            // Vor der Validierung den error-Status entfernen
+                            this.classList.remove('error');
+                            const result = validatePLZFunc(this);
+                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                            if (result && this.value.trim() !== '') {
+                                this.classList.add('valid');
+                            }
+                        }
+                    } else if ((this.id === 'Phone' || this.id === 'phone0') && typeof validatePhoneFunc === 'function') {
+                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                        if (this.classList.contains('required') && this.value.trim() === '') {
+                            showError(this, 'Dieses Feld ist erforderlich.');
+                        } else {
+                            // Vor der Validierung den error-Status entfernen
+                            this.classList.remove('error');
+                            const result = validatePhoneFunc(this);
+                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                            if (result && this.value.trim() !== '') {
+                                this.classList.add('valid');
+                            }
+                        }
+                    } else if (this.id === 'birthdate0' && typeof validateAgeFunc === 'function') {
+                        // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                        if (this.classList.contains('required') && this.value.trim() === '') {
+                            showError(this, 'Dieses Feld ist erforderlich.');
+                        } else {
+                            // Vor der Validierung den error-Status entfernen
+                            this.classList.remove('error');
+                            const result = validateAgeFunc(this);
+                            // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                            if (result && this.value.trim() !== '') {
+                                this.classList.add('valid');
+                            }
+                        }
                     } else {
-                        // Vor der Validierung den error-Status entfernen
-                        field.classList.remove('error');
-                        const result = validatePLZFunc(field);
+                        // Standardvalidierung für alle anderen Felder
+                        const result = validateField(this);
                         // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
-                        if (result && field.value.trim() !== '') {
-                            field.classList.add('valid');
+                        if (result && this.value.trim() !== '') {
+                            this.classList.add('valid');
                         }
                     }
-                } else if ((field.id === 'Phone' || field.id === 'phone0') && typeof validatePhoneFunc === 'function') {
-                    // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
-                    if (field.classList.contains('required') && field.value.trim() === '') {
-                        showError(field, 'Dieses Feld ist erforderlich.');
+                    
+                    // Zeige Fehlermeldungen wieder an, wenn vorhanden
+                    let selector;
+                    
+                    // Unterscheide zwischen verschiedenen Feldtypen
+                    if (this.type === 'radio' || this.type === 'checkbox') {
+                        selector = '.validationerror[data-for="' + this.name + '"]';
+                    } else if (this.id) {
+                        selector = '.validationerror[data-for="' + this.id + '"]';
                     } else {
-                        // Vor der Validierung den error-Status entfernen
-                        field.classList.remove('error');
-                        const result = validatePhoneFunc(field);
-                        // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
-                        if (result && field.value.trim() !== '') {
-                            field.classList.add('valid');
-                        }
+                        selector = '.validationerror[data-for="' + this.name + '"]';
                     }
-                } else if (field.id === 'birthdate0' && typeof validateAgeFunc === 'function') {
-                    // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
-                    if (field.classList.contains('required') && field.value.trim() === '') {
-                        showError(field, 'Dieses Feld ist erforderlich.');
-                    } else {
-                        // Vor der Validierung den error-Status entfernen
-                        field.classList.remove('error');
-                        const result = validateAgeFunc(field);
-                        // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
-                        if (result && field.value.trim() !== '') {
-                            field.classList.add('valid');
-                        }
-                    }
-                } else {
-                    // Standardvalidierung für alle anderen Felder
-                    const result = validateField(field);
-                    // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
-                    if (result && field.value.trim() !== '') {
-                        field.classList.add('valid');
-                    }
+                    
+                    const errors = document.querySelectorAll(selector);
+                    errors.forEach(function(error) {
+                        error.style.display = 'block';
+                    });
+                } catch (e) {
+                    console.error("Fehler im Blur-Event:", e);
                 }
-                
-                // Zeige Fehlermeldungen wieder an, wenn vorhanden
-                let selector;
-                
-                // Unterscheide zwischen verschiedenen Feldtypen
-                if (field.type === 'radio' || field.type === 'checkbox') {
-                    selector = '.validationerror[data-for="' + field.name + '"]';
-                } else if (field.id) {
-                    selector = '.validationerror[data-for="' + field.id + '"]';
-                } else {
-                    selector = '.validationerror[data-for="' + field.name + '"]';
-                }
-                
-                const errors = document.querySelectorAll(selector);
-                errors.forEach(function(error) {
-                    error.style.display = 'block';
-                });
-            } catch (e) {
-                console.error("Fehler im Blur-Event:", e);
-            }
-        });
+            },
+            'Validiert das Feld ' + (field.id || field.name) + ' beim Verlassen'
+        );
+        
+        // NEUE IMPLEMENTIERUNG MIT EVENT REGISTRY
+        // Füge input-Event-Listener für spezielle Felder hinzu
+        if ((field.id === 'PLZ' || field.id === 'Phone' || field.id === 'phone0') && field.type === 'text') {
+            EventRegistry.addListenerToElement(
+                field,
+                'input',
+                function() {
+                    try {
+                        // Rufe die entsprechende Validierungsfunktion auf
+                        if (this.id === 'PLZ' && typeof validatePLZFunc === 'function') {
+                            // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                            if (this.classList.contains('required') && this.value.trim() === '') {
+                                showError(this, 'Dieses Feld ist erforderlich.');
+                            } else {
+                                // Vor der Validierung den error-Status entfernen
+                                this.classList.remove('error');
+                                const result = validatePLZFunc(this);
+                                // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                                if (result && this.value.trim() !== '') {
+                                    this.classList.add('valid');
+                                }
+                            }
+                        } else if ((this.id === 'Phone' || this.id === 'phone0') && typeof validatePhoneFunc === 'function') {
+                            // Prüfe zuerst, ob das Feld ausgefüllt ist, wenn es ein Pflichtfeld ist
+                            if (this.classList.contains('required') && this.value.trim() === '') {
+                                showError(this, 'Dieses Feld ist erforderlich.');
+                            } else {
+                                // Vor der Validierung den error-Status entfernen
+                                this.classList.remove('error');
+                                const result = validatePhoneFunc(this);
+                                // Wenn die Validierung erfolgreich ist und das Feld nicht leer ist, setze valid-Klasse
+                                if (result && this.value.trim() !== '') {
+                                    this.classList.add('valid');
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Fehler im Input-Event:", e);
+                    }
+                },
+                'Echtzeitvalidierung für ' + field.id + ' bei Eingabe'
+            );
+        }
     });
     
+    // NEUE IMPLEMENTIERUNG MIT EVENT REGISTRY
     // Checkbox-Gruppen-Validierung für die Wochen
     const checkboxes = document.querySelectorAll('input[name="curso0[]"]');
     checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            try {
-                // Finde ein beliebiges Checkbox-Element in der Gruppe
-                const anyCheckbox = document.querySelector('input[name="curso0[]"]');
-                if (anyCheckbox) {
-                    validateField(anyCheckbox);
+        EventRegistry.addListenerToElement(
+            checkbox,
+            'change',
+            function() {
+                try {
+                    // Finde ein beliebiges Checkbox-Element in der Gruppe
+                    const anyCheckbox = document.querySelector('input[name="curso0[]"]');
+                    if (anyCheckbox) {
+                        validateField(anyCheckbox);
+                    }
+                } catch (e) {
+                    console.error("Fehler im Checkbox-Change-Event:", e);
                 }
-            } catch (e) {
-                console.error("Fehler im Checkbox-Change-Event:", e);
-            }
-        });
+            },
+            'Validiert Wochenauswahl-Checkboxen bei A00e4nderung'
+        );
     });
-    
+
+    // NEUE IMPLEMENTIERUNG MIT EVENT REGISTRY
     // Verbesserte Formularvalidierung beim Absenden
-    document.addEventListener('submit', function(event) {
-        if (event.target.id === 'formins') {
+    EventRegistry.addListener(
+        '#formins',
+        'submit',
+        function(event) {
             console.log("Formular wird abgesendet, Validierung beginnt");
-            // Verhindere das Standard-Submit-Verhalten zunächst
+            // Verhindere das Standard-Submit-Verhalten zuna00e4chst
             event.preventDefault();
             
-            // Führe die Validierung durch
+            // Fu00fchre die Validierung durch
             const isValid = validateForm();
             console.log("Formularvalidierung Ergebnis:", isValid);
             
             if (isValid) {
-                // Wenn alles gültig ist, führe das Formular manuell aus
-                console.log("Formular ist gültig, wird jetzt abgesendet");
+                // Wenn alles gu00fcltig ist, fu00fchre das Formular manuell aus
+                console.log("Formular ist gu00fcltig, wird jetzt abgesendet");
                 try {
                     event.target.submit();
                 } catch (e) {
                     console.error("Fehler beim Submit:", e);
-                    // Versuche es erneut über die DOM-Methode
+                    // Versuche es erneut u00fcber die DOM-Methode
                     document.getElementById('formins').submit();
                 }
             } else {
-                console.log("Formular ist ungültig, Absenden wurde verhindert");
+                console.log("Formular ist ungu00fcltig, Absenden wurde verhindert");
             }
-        }
-    }, true);
+        },
+        'Validiert das gesamte Formular vor dem Absenden',
+        true
+    );
 
-    // Überschreibe die submitclick-Funktion auf globaler Ebene - vereinfacht
+    // Integration der DSB-Radio-Button-Logik in EventRegistry
+    const dsb0_1 = document.getElementById('dsb0_1');
+    const dsb0_2 = document.getElementById('dsb0_2');
+
+    if (dsb0_1) {
+        EventRegistry.addListenerToElement(
+            dsb0_1,
+            'change',
+            function() {
+                if (this.checked) window.dsbclicksi('0');
+            },
+            'DSB-Schüler "Ja" ausgewählt - aktualisiert Preisberechnung'
+        );
+    }
+
+    if (dsb0_2) {
+        EventRegistry.addListenerToElement(
+            dsb0_2,
+            'change',
+            function() {
+                if (this.checked) window.dsbclickno('0');
+            },
+            'DSB-Schüler "Nein" ausgewählt - aktualisiert Preisberechnung'
+        );
+    }
+
+    // U00fcberschreibe die submitclick-Funktion auf globaler Ebene - vereinfacht
     window.submitclick = function() {
         console.log("submitclick wurde aufgerufen");
         try {
@@ -1108,80 +1296,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     };
-    
-    // CSS für Validierungsstile dynamisch einfügen
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Generelle Stile für normale Formularelemente */
-        input:not([type="checkbox"]):not([type="radio"]).error,
-        select.error,
-        textarea.error {
-            border-color: #dc3545 !important;
-        }
-        
-        input:not([type="checkbox"]):not([type="radio"]).valid,
-        select.valid,
-        textarea.valid {
-            border-color: #28a745 !important;
-        }
-        
-        /* Keine visuellen Änderungen bei Checkboxen und Radio-Buttons */
-        input[type="checkbox"],
-        input[type="radio"],
-        input[type="checkbox"][data-validation-state="valid"],
-        input[type="radio"][data-validation-state="valid"],
-        input[type="checkbox"][data-validation-state="error"],
-        input[type="radio"][data-validation-state="error"],
-        input[type="checkbox"][data-validation-state="unchecked"],
-        input[type="radio"][data-validation-state="unchecked"] {
-            /* Keine speziellen Stile notwendig */
-        }
-        
-        /* Fehlermeldungen */
-        .validationerror {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 4px;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            background-color: #fff8f8;
-            padding: 5px 10px;
-            border-radius: 4px;
-            border-left: 3px solid #dc3545;
-        }
-        
-        /* Suchefeld mit speziellem Platzhalter */
-        .custom-select {
-            width: 100%;
-            padding: 0.375rem 0.75rem;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-        }
-        
-        /* Wochenauswahl - Containerklassen */
-        .form-group.weeks-container {
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-            background-color: #f8f9fa;
-        }
-        
-        /* Checkboxen in der Wochenauswahl */
-        .form-group.weeks-container input[type="checkbox"][data-validation-state="error"] + label {
-            color: #dc3545;
-            font-weight: bold;
-        }
-        
-        /* Ausrichtung für Radio-Button-Gruppierungen */
-        .form-check-inline {
-            display: inline-flex;
-            align-items: center;
-            padding-left: 0;
-            margin-right: 0.75rem;
-        }
-    `;
-    document.head.appendChild(style);
     
     // Debugging-Ausgabe
     console.log("Validierung initialisiert - optimierte Version");

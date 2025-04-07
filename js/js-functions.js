@@ -6,6 +6,14 @@
  * - Diese Datei: UI-Funktionen und einfache Feld-Validierungen
  * - pure-validation.js: Komplexes Formular-Validierungssystem
  *
+ * EXPORTIERTE FUNKTIONEN:
+ * Diese Funktionen werden global (window) exportiert und von pure-validation.js verwendet:
+ * - validatePLZ: Validiert Postleitzahlen
+ * - validatePhone: Validiert Telefonnummern
+ * - validateAge: Validiert das Alter anhand des Geburtsdatums
+ * - createErrorElement: Basisfunktion für die Erstellung von Fehlermeldungen
+ * - removeErrorElement: Basisfunktion für das Entfernen von Fehlermeldungen
+ *
  * HINWEIS ZUR FUNKTIONSAUFTEILUNG:
  * Einige Validierungsfunktionen (validatePLZ, validatePhone, validateAge)
  * sind hier implementiert, während ähnliche Funktionalität auch in 
@@ -279,11 +287,9 @@ function weekclick(indexstr) {
             precioElement.innerHTML = displayprice + "€ (precio de alumnos de DSB)";
         } else {
             precioElement.innerHTML = displayprice + "€";
+        }
     }
-    }
-
 }
-
 
 
 // DSB Schüler "Ja" geklickt
@@ -352,6 +358,35 @@ function validatePhone(input) {
 }
 
 /**
+ * Erstellt ein DOM-Element für Validierungsfehlermeldungen
+ * Diese Funktion ist eine gemeinsame Basisfunktion für verschiedene Fehleranzeigefunktionen
+ * 
+ * @param {string} message - Die anzuzeigende Fehlermeldung
+ * @param {string} fieldId - Die ID oder der Name des Feldes, auf das sich die Fehlermeldung bezieht
+ * @returns {HTMLElement} Das erstellte Fehlermeldungselement
+ */
+function createErrorElement(message, fieldId) {
+    // Erstelle ein neues Element für die Fehlermeldung
+    const errorElement = document.createElement('div');
+    errorElement.className = 'validationerror';
+    errorElement.style.display = 'block';
+    errorElement.style.visibility = 'visible';
+    errorElement.style.opacity = '1';
+    
+    // Setze ein Datenattribut für die Zuordnung zum Feld
+    if (fieldId) {
+        errorElement.setAttribute('data-for', fieldId);
+    }
+    
+    // Erstelle und füge den Nachrichtentext hinzu
+    const spanElement = document.createElement('span');
+    spanElement.textContent = message;
+    errorElement.appendChild(spanElement);
+    
+    return errorElement;
+}
+
+/**
  * Zeigt Validierungsfehler für ein Formularfeld an
  * Wird von verschiedenen Validierungsfunktionen aufgerufen, um Fehlermeldungen anzuzeigen
  * 
@@ -368,10 +403,8 @@ function showValidationError(field, message) {
         return;
     }
     
-    // Erstelle ein neues Element für die Fehlermeldung
-    const errorElement = document.createElement('div');
-    errorElement.className = 'validationerror';
-    errorElement.textContent = message;
+    // Verwende die gemeinsame Basisfunktion für die Fehlererstellung
+    const errorElement = createErrorElement(message, field.id || field.name);
     errorElement.style.color = 'red';
     errorElement.style.fontSize = '0.8em';
     errorElement.style.marginTop = '5px';
@@ -392,15 +425,43 @@ function showValidationError(field, message) {
     console.log('Neue Fehlermeldung hinzugefügt');
 }
 
-function clearValidationError(field) {
-    // Entferne die Fehlerklasse vom Eingabefeld
-    field.classList.remove('validationinvalid');
-    field.style.borderColor = '';
+/**
+ * Entfernt Fehlermeldungselemente für ein bestimmtes Feld
+ * Gemeinsame Basisfunktion für das Entfernen von Validierungsfehlern
+ * 
+ * @param {string} selector - CSS-Selektor für die zu entfernenden Fehlerelemente
+ */
+function removeErrorElement(selector) {
+    // Finde alle Fehlermeldungen, die dem Selektor entsprechen
+    const errorMessages = document.querySelectorAll(selector);
     
-    // Finde alle Fehlermeldungen im selben Container
-    const parent = field.parentNode;
-    const errors = parent.querySelectorAll('.validationerror');
-    errors.forEach(error => error.remove());
+    // Entferne jede gefundene Fehlermeldung
+    errorMessages.forEach(function(element) {
+        if (element && element.parentElement) {
+            element.parentElement.removeChild(element);
+        }
+    });
+}
+
+/**
+ * Entfernt Validierungsfehler für ein bestimmtes Feld
+ * Wird aufgerufen, bevor eine neue Validierung durchgeführt wird
+ * 
+ * @param {HTMLElement} field - Das Feld, für das Fehler entfernt werden sollen
+ */
+function clearValidationError(field) {
+    // Erstelle einen Selektor basierend auf der Feld-ID oder dem Namen
+    const selector = field.id ? 
+        `.validationerror[data-for="${field.id}"]` : 
+        `.validationerror[data-for="${field.name}"]`;
+    
+    // Verwende die gemeinsame Basisfunktion zum Entfernen der Fehler
+    removeErrorElement(selector);
+    
+    // Entferne auch visuelle Kennzeichnungen vom Feld selbst
+    field.classList.remove('validationinvalid');
+    field.classList.remove('error');
+    field.style.borderColor = '';
 }
 
 /**
@@ -482,11 +543,11 @@ function validateAge(input) {
 }
 
 function removeExistingError(input) {
-    // Entferne bestehende Fehlermeldung
-    const existingError = input.parentElement.querySelector('.validationerror');
-    if (existingError) {
-        existingError.remove();
-    }
+    // Erstelle einen Selektor für die Fehlermeldung des Geburtstagfeldes
+    const selector = '.validationerror[data-for="birthdate0"]';
+    
+    // Verwende die gemeinsame Basisfunktion zum Entfernen der Fehler
+    removeErrorElement(selector);
 }
 
 function showAgeError(input, message) {
@@ -494,17 +555,8 @@ function showAgeError(input, message) {
     input.classList.add('error');
     input.classList.remove('valid');
     
-    // Erstelle und füge die Fehlermeldung hinzu
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'validationerror';
-    errorDiv.style.display = 'block';
-    errorDiv.style.visibility = 'visible';
-    errorDiv.style.opacity = '1';
-    errorDiv.setAttribute('data-for', 'birthdate0');
-    
-    const spanElement = document.createElement('span');
-    spanElement.textContent = message;
-    errorDiv.appendChild(spanElement);
+    // Verwende die gemeinsame Basisfunktion für die Fehlererstellung
+    const errorDiv = createErrorElement(message, 'birthdate0');
     
     // Füge die Fehlermeldung nach dem Input-Feld ein
     input.parentElement.appendChild(errorDiv);
@@ -517,13 +569,18 @@ function showAgeError(input, message) {
     }, 0);
 }
 
+/**
+ * Entfernt die Fehlermeldung für das Altersvalidierungsfeld
+ * @param {HTMLElement} input - Das Eingabefeld für das Geburtsdatum
+ */
 function hideAgeError(input) {
     // Entferne Fehlermarkierung vom Eingabefeld
     input.classList.remove('error');
     input.classList.add('valid');
     
-    // Entferne die Fehlermeldung
-    removeExistingError(input);
+    // Verwende die gemeinsame Basisfunktion zum Entfernen der Fehler
+    // anstelle des bisherigen direkten Aufrufs von removeExistingError
+    removeErrorElement('.validationerror[data-for="birthdate0"]');
     
     // Verstecke JUNG/ALT Meldungen
     const jungElement = document.getElementById('JUNG');
