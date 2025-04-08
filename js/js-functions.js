@@ -37,6 +37,7 @@
  * - removeExistingError(input): Entfernt vorhandene Fehlermeldungen bei der Altersvalidierung
  * - showAgeError(input, message): Zeigt spezifische Altersfehler mit besonderen Meldungen an
  * - hideAgeError(input): Entfernt Altersfehlermeldungen
+ * - handlePoolQuestionVisibility(input): Prüft ob das Kind älter als 6 Jahre ist und blendet ggf. die Pool-Frage aus
  */
 
 // ===== ALLGEMEINE HILFSFUNKTIONEN =====
@@ -589,6 +590,81 @@ function hideAgeError(input) {
     if (altElement) altElement.style.display = 'none';
 }
 
+/**
+ * Prüft ob das Kind älter als 6 Jahre ist und blendet ggf. die Pool-Frage aus
+ * Bei Kindern über 6 Jahren wird die Pool-Frage automatisch auf "Ja" gesetzt
+ * 
+ * @param {HTMLInputElement} input - Das Geburtsdatum-Eingabefeld
+ */
+function handlePoolQuestionVisibility(input) {
+    console.log('Überprüfe Alter für Pool-Frage-Sichtbarkeit');
+    
+    // Hole die aktuellen DOM-Elemente
+    const poolQuestionContainer = document.querySelector('.form-row:has(#autohinch0_1)') || 
+                                 document.querySelector('div.form-row:has([name="autohinch0"])');
+    const poolYesRadio = document.getElementById('autohinch0_1');
+    const poolNoRadio = document.getElementById('autohinch0_2');
+    
+    if (!poolQuestionContainer || !poolYesRadio || !poolNoRadio) {
+        console.error('Pool-Frage-Elemente nicht gefunden');
+        return;
+    }
+    
+    // Wenn kein Datum eingegeben wurde, zeige die Frage an
+    if (!input.value) {
+        poolQuestionContainer.style.display = '';
+        return;
+    }
+    
+    try {
+        // Parse das eingegebene Datum
+        const birthDate = new Date(input.value);
+        if (isNaN(birthDate.getTime())) {
+            poolQuestionContainer.style.display = '';
+            return;
+        }
+        
+        // Berechne das Alter am 1.1. des aktuellen Jahres
+        const currentYear = new Date().getFullYear();
+        const referenceDate = new Date(currentYear, 0, 1); // 1. Januar des aktuellen Jahres
+        
+        // Berechne das Alter in Jahren
+        let age = referenceDate.getFullYear() - birthDate.getFullYear();
+        
+        // Prüfe, ob der Geburtstag in diesem Jahr schon war
+        const hasBirthdayOccurred = (
+            referenceDate.getMonth() > birthDate.getMonth() || 
+            (referenceDate.getMonth() === birthDate.getMonth() && 
+             referenceDate.getDate() >= birthDate.getDate())
+        );
+        
+        if (!hasBirthdayOccurred) {
+            age--;
+        }
+        
+        console.log('Berechnetes Alter am 1.1.:', age);
+        
+        // Verstecke die Frage und setze "Ja" automatisch, wenn das Kind älter als 6 Jahre ist
+        if (age > 6) {
+            poolQuestionContainer.style.display = 'none';
+            poolYesRadio.checked = true;
+            
+            // Löse ein change-Event aus, falls nötig
+            const event = new Event('change', { bubbles: true });
+            poolYesRadio.dispatchEvent(event);
+            
+            console.log('Kind ist älter als 6 Jahre - Pool-Frage ausgeblendet und auf "Ja" gesetzt');
+        } else {
+            // Zeige die Frage für Kinder bis 6 Jahre
+            poolQuestionContainer.style.display = '';
+            console.log('Kind ist 6 Jahre oder jünger - Pool-Frage wird angezeigt');
+        }
+    } catch (e) {
+        console.error('Fehler bei der Altersberechnung für Pool-Frage:', e);
+        poolQuestionContainer.style.display = '';
+    }
+}
+
 // Diese Variablen werden dynamisch vom PHP-Code gefüllt
 // Sie sind nur Platzhalter und müssen im PHP-Template gesetzt werden
 let cursoprecio_1_1, cursoprecio_1_2, cursoprecio_1_3, cursoprecio_1_4;
@@ -647,6 +723,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 weekclick(i); // Aktualisiere Preise, wenn Früh-Option geändert wird
             });
         }
+    }
+    
+    // NEU: Event-Listener für Geburtsdatum-Feld zur Pool-Frage-Sichtbarkeit
+    const birthdateInput = document.getElementById('birthdate0');
+    if (birthdateInput) {
+        // Bei Änderung des Geburtsdatums
+        birthdateInput.addEventListener('change', function() {
+            handlePoolQuestionVisibility(this);
+        });
+        
+        // Initialen Status direkt beim Laden setzen, falls ein Wert vorhanden ist
+        handlePoolQuestionVisibility(birthdateInput);
     }
     
     // Die Event-Listener für die Validierungsfunktionen wurden entfernt,

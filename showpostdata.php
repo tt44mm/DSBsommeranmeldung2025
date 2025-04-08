@@ -112,10 +112,28 @@ echo "</pre><hr>";
                  <div class="field"  ><label class="notrequired float" for="medicaciones#index#">Medicaciones </label><strong>&nbsp;<?php echo "$content</strong></div>";
                }?>
 
-            <div class="field"  ><label  class="float required description1">&iquest;Sabe nadar sin ayuda?  </label> <strong><?php $key='nadar'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+             <div class="field"  ><label  class="float required description1">&iquest;Sabe nadar sin ayuda?  </label> <strong><?php $key='nadar'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
+            <?php
+            // Berechne das Alter des Kindes am 1.1. des aktuellen Jahres
+            $birthDateStr = $POSTsane['birthdate'.$hijostr];
+            $birthDate = new DateTime($birthDateStr);
+            $currentYear = date('Y');
+            $referenceDate = new DateTime($currentYear . '-01-01');
+            
+            // Berechne das Alter
+            $age = $referenceDate->diff($birthDate)->y;
+            
+            // Zeige die Pool-Frage nur für Kinder bis 6 Jahre an
+            // Für ältere Kinder wird sie ausgeblendet und automatisch auf "Si" gesetzt
+            if ($age <= 6) {
+            ?>
 			<div class="field"  >
               <label class="float required description1">&iquest;Tiene  autorizaci&oacute;n para ba&ntilde;arse en las piscinas hinchables infantiles bajo la  supervisi&oacute;n del profesor/a?    </label> <strong><?php $key='autohinch'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
+            <?php 
+            }
+            // Bei älteren Kindern wird die Frage nicht angezeigt
+            ?>
 
             <div class="field"  ><label class="float required description1">&iquest;Tiene autorizaci&oacute;n para ba&ntilde;arse en la piscina grande bajo la supervisi&oacute;n del socorrista?   </label> <strong><?php $key='autopisci'.$hijostr; echo strip_tags($POSTsane[$key]) ?></strong></div>
 
@@ -321,7 +339,7 @@ echo "</pre><hr>";
 </div>
 </div>
 
-<div class="legend">C&oacute;mo han conocido nuestra oferta de los campus de verano en  alem&aacute;n, ingl&eacute;s o franc&eacute;s en el Colegio Alem&aacute;n:</div>
+<div class="legend">C&oacute;mo han conocido nuestra oferta de los campus de verano en el Colegio Alem&aacute;n:</div>
 
   <div class="field" style="clear:both;border-bottom: solid 1px silver;">
         <span style="padding-left:26px" id="infoKursFundort" name="infoKursFundort"><?php echo strip_tags($POSTsane['infoKursFundort']);?></span>

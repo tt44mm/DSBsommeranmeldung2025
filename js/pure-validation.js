@@ -191,9 +191,9 @@ const EventRegistry = {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Referenzen zu den Validierungsfunktionen aus js-functions.js
-    const validatePLZFunc = window.validatePLZ || function() { return true; };
-    const validatePhoneFunc = window.validatePhone || function() { return true; };
-    const validateAgeFunc = window.validateAge || function() { return true; };
+    const validatePLZFunc = validatePLZ || function() { return true; };
+    const validatePhoneFunc = validatePhone || function() { return true; };
+    const validateAgeFunc = validateAge || function() { return true; };
     
     // Definiere die Validierungsregeln für verschiedene Felder
     const validationRules = {
@@ -400,14 +400,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Nutze die gemeinsame Basisfunktion aus js-functions.js für die Fehlererstellung
             // Fallback, falls die Funktion nicht verfügbar ist
             let errorContainer;
-            if (typeof window.createErrorElement === 'function') {
+            if (typeof createErrorElement === 'function') {
                 // Bestimme die ID oder den Namen für das data-for Attribut
                 const fieldIdentifier = (field.type === 'radio' || field.type === 'checkbox') 
                     ? field.name 
                     : (field.id || field.name);
                 
                 // Nutze die gemeinsame Funktion
-                errorContainer = window.createErrorElement(message, fieldIdentifier);
+                errorContainer = createErrorElement(message, fieldIdentifier);
             } else {
                 // Fallback: Direktes Erstellen des Elements, wenn die Funktion nicht verfügbar ist
                 errorContainer = document.createElement('div');
@@ -672,8 +672,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Nutze die gemeinsame Basisfunktion, wenn verfügbar, sonst fallback
-        if (typeof window.removeErrorElement === 'function') {
-            window.removeErrorElement(selector);
+        if (typeof removeErrorElement === 'function') {
+            removeErrorElement(selector);
         } else {
             // Fallback: Alle Fehlermeldungen für dieses Feld entfernen
             const errorMessages = document.querySelectorAll(selector);
@@ -697,9 +697,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("removeAllErrors wird aufgerufen");
         try {
             // Verwende die gemeinsame Basisfunktion zum Entfernen aller Fehlerelemente
-            if (typeof window.removeErrorElement === 'function') {
+            if (typeof removeErrorElement === 'function') {
                 // Entferne alle Fehlerelemente
-                window.removeErrorElement('.validationerror');
+                removeErrorElement('.validationerror');
             } else {
                 // Fallback: Manuelles Entfernen aller Fehlerelemente
                 const errorContainers = document.querySelectorAll('.validationerror');
@@ -1193,28 +1193,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // NEUE IMPLEMENTIERUNG MIT EVENT REGISTRY
-    // Checkbox-Gruppen-Validierung für die Wochen
-    const checkboxes = document.querySelectorAll('input[name="curso0[]"]');
-    checkboxes.forEach(function(checkbox) {
-        EventRegistry.addListenerToElement(
-            checkbox,
-            'change',
-            function() {
-                try {
-                    // Finde ein beliebiges Checkbox-Element in der Gruppe
-                    const anyCheckbox = document.querySelector('input[name="curso0[]"]');
-                    if (anyCheckbox) {
-                        validateField(anyCheckbox);
-                    }
-                } catch (e) {
-                    console.error("Fehler im Checkbox-Change-Event:", e);
-                }
-            },
-            'Validiert Wochenauswahl-Checkboxen bei A00e4nderung'
-        );
-    });
-
-    // NEUE IMPLEMENTIERUNG MIT EVENT REGISTRY
     // Verbesserte Formularvalidierung beim Absenden
     EventRegistry.addListener(
         '#formins',
@@ -1246,33 +1224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         true
     );
 
-    // Integration der DSB-Radio-Button-Logik in EventRegistry
-    const dsb0_1 = document.getElementById('dsb0_1');
-    const dsb0_2 = document.getElementById('dsb0_2');
-
-    if (dsb0_1) {
-        EventRegistry.addListenerToElement(
-            dsb0_1,
-            'change',
-            function() {
-                if (this.checked) window.dsbclicksi('0');
-            },
-            'DSB-Schüler "Ja" ausgewählt - aktualisiert Preisberechnung'
-        );
-    }
-
-    if (dsb0_2) {
-        EventRegistry.addListenerToElement(
-            dsb0_2,
-            'change',
-            function() {
-                if (this.checked) window.dsbclickno('0');
-            },
-            'DSB-Schüler "Nein" ausgewählt - aktualisiert Preisberechnung'
-        );
-    }
-
-    // U00fcberschreibe die submitclick-Funktion auf globaler Ebene - vereinfacht
+    // u00dcberschreibe die submitclick-Funktion auf globaler Ebene - vereinfacht
     window.submitclick = function() {
         console.log("submitclick wurde aufgerufen");
         try {

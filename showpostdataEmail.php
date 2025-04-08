@@ -91,7 +91,7 @@ $stylekidlabrequired = ' style="margin-top:035em;padding:0.15em;display: inline;
 
 <div <?php echo $stylelegend ?>>Transporte gratis:</div>
 <div style="font-weight: normal; font-size: .9em;margin-left: 0px; margin-bottom: 1px; margin-top: 3px; margin-right: 0px; overflow: hidden; _height: 0.1%;"> Se puede utilizar distintas l&iacute;neas de autob&uacute;s y distintas paradas de autob&uacute;s en ida y vuelta. Est&aacute;n garantizadas las paradas elegidas en la inscripci&oacute;n, siempre que haya un n&uacute;mero suficiente de alumnos para crear un recorrido que incluye estas paradas elegidas. No podemos prever el horario de la parada, ni la ruta, ya que ser&aacute; organizado una vez recibidas todas las inscripciones. Esto requiere cierta flexibilidad por su parte, ya que el horario de la parada elegida podr&iacute;a variar.<br>
-  En <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/transporte/">Horarios de autob&uacute;s</a>&nbsp;se pueden ver los recorridos en el Campus de verano 2023 con car&aacute;cter orientativo.</div>
+  En <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/transporte/">Horarios de autob&uacute;s</a>&nbsp;se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter orientativo.</div>
 
 <div <?php echo $stylelabmargin; ?>>
   <span <?php echo $stylelabrequired; ?>>Bus ida </span>
@@ -160,6 +160,20 @@ if (array_key_exists($key, $POSTsaneEmail)) {
     </strong>
   </div>
 
+  <?php
+  // Berechne das Alter des Kindes am 1.1. des aktuellen Jahres
+  $birthDateStr = $POSTsaneEmail['birthdate0'];
+  $birthDate = new DateTime($birthDateStr);
+  $currentYear = date('Y');
+  $referenceDate = new DateTime($currentYear . '-01-01');
+  
+  // Berechne das Alter
+  $age = $referenceDate->diff($birthDate)->y;
+  
+  // Zeige die Pool-Frage nur für Kinder bis 6 Jahre an
+  // Für ältere Kinder wird sie ausgeblendet und automatisch auf "Si" gesetzt
+  if ($age <= 6) {
+  ?>
   <div style="margin-top: 5px; padding-top: 3px;">
     <span <?php echo $stylekidlabrequired; ?>>&iquest;Tiene autorizaci&oacute;n para ba&ntilde;arse en las piscinas hinchables infantiles bajo la supervisi&oacute;n del profesor/a? </span>
     <strong>
@@ -167,6 +181,10 @@ if (array_key_exists($key, $POSTsaneEmail)) {
       echo strip_tags($POSTsaneEmail[$key]) ?>
     </strong>
   </div>
+  <?php 
+  }
+  // Wenn das Kind älter als 6 Jahre ist, setzen wir keinen Wert in der Ausgabe
+  ?>
 
   <div style="margin-top: 5px; padding-top: 3px;">
     <span <?php echo $stylekidlabrequired; ?>>&iquest;Tiene autorizaci&oacute;n para ba&ntilde;arse en la piscina grande bajo la supervisi&oacute;n del socorrista? </span>
@@ -207,8 +225,8 @@ if (array_key_exists($key, $POSTsaneEmail)) {
       <?php
       $cumpleISO = date("Y-m-d", strtotime(strip_tags($POSTsaneEmail['birthdate0'])));
       //echo $cumpleISO;
-      $kursName = getKursName($KursNameJung, $KursNameAlt, $cumpleISO, $stichtagkurs); //siehe cursossemanasprecios.php 					 
-      echo $kursName;
+      //$kursName = getKursName($KursNameJung, $KursNameAlt, $cumpleISO, $stichtagkurs); //siehe cursossemanasprecios.php 					 
+      //echo $kursName;
       ?></strong></div>
 
   <div style="clear: left; margin-top: 5px; padding-top: 5px;">
@@ -406,7 +424,7 @@ if (array_key_exists($key, $POSTsaneEmail)) {
   <?php //</div> hija abschnitt
   ?>
 
-  <div <?php echo $stylelegend ?>>C&oacute;mo han conocido nuestra oferta de los campus de verano en alem&aacute;n, ingl&eacute;s o franc&eacute;s en el Colegio Alem&aacute;n:</div>
+  <div <?php echo $stylelegend ?>>C&oacute;mo han conocido nuestra oferta de los campus de verano en el Colegio Alem&aacute;n:</div>
   <div class="field" style="clear:both;">
     <span style="padding-left:26px" id="infoKursFundort" name="infoKursFundort"><?php echo strip_tags($POSTsaneEmail['infoKursFundort']); ?></span>
   </div>

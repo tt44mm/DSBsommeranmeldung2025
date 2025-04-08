@@ -17,7 +17,7 @@
 <p align="right">Email:&nbsp;<a href="mailto:s.brattge@dsbilbao.org" target="_blank">s.brattge@dsbilbao.org</a></p>
 
 <p>&nbsp;<br />
-    <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/" target="_blank">Visiten la p&aacute;gina &quot;Campus de verano 2024&quot; para m&aacute;s informaci&oacute;n.</a>
+    <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/" target="_blank">Visiten la p&aacute;gina &quot;Campus de verano 2025&quot; para m&aacute;s informaci&oacute;n.</a>
 </p>
 <p><strong>Hemos recibido los siguientes datos:<strong><br />
             <p>

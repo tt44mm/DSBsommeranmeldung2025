@@ -641,7 +641,7 @@ se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter ori
 				<div id="UmfrageActividades" style="margin-left:2em;">
 
 					<div class="form-row" style="clear:both;">
-						<label style="text-align:left!important;width:100%" class="col-form-label col-auto required" for="infoKursFundort">Ind&iacute;quenos c&oacute;mo han conocido nuestra oferta de los campus de verano en alem&aacute;n, ingl&eacute;s o franc&eacute;s en el Colegio Alem&aacute;n&nbsp; <sup>&#9733;</sup></label>
+						<label style="text-align:left!important;width:100%" class="col-form-label col-auto required" for="infoKursFundort">Ind&iacute;quenos c&oacute;mo han conocido nuestra oferta de los campus de verano en el Colegio Alem&aacute;n&nbsp; <sup>&#9733;</sup></label>
 						<div>
 						<input class="required w-100" validate="required:true" id="infoKursFundort" name="infoKursFundort" type="text" size="40" maxlength="120" value="<?php echo $POSTARRAY['infoKursFundort']; ?>" />
 						</div>
