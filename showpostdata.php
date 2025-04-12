@@ -291,7 +291,7 @@ echo "</pre><hr>";
 				//das wenn preis je nach Anzahl wochen
 			    //$prize = $prize + $cursoprecio[$wochenanzahl];
 
-				//Preisberechnung Discounts 2024
+				//Preisberechnung Discounts 2025
 				$preis=1.0 * $prize;
 
 				$discount1active = ($wochenanzahl == 4); //Mehrere Wochen	   
@@ -320,7 +320,7 @@ echo "</pre><hr>";
 				$primerpago = 0;
 				$segundopago= $prize-$primerpago;
 				if ($segundopago>0)	 {
-					$segundopagotext = "Segundo pago: $segundopago Euros hasta el 31 de mayo 2024.";
+					$segundopagotext = "Segundo pago: $segundopago Euros hasta el 31 de mayo 2025.";
 				} else {
 					$segundopagotext = "";
 				}

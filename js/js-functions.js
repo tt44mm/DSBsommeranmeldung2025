@@ -240,7 +240,7 @@ function weekclick(indexstr) {
     if (allWeeksSelected) {
         fullprice = sumprecio;
         sumprecio = allweeks;
-        let descuentoall = "todos las semanas";
+        let descuentoall = "todas las semanas";
         if (isDSBStudent) {
             descuentos = descuentoall + ", " + descuentos;
         } else {
@@ -508,12 +508,12 @@ function validateAge(input) {
     
     // Überprüfe, ob das Alter im gültigen Bereich liegt
     const isValidAge = age >= 1 && age <= 85;
-    console.log('Ist Alter gültig (1-85 Jahre)?', isValidAge);
+    console.log('Ist Alter gültig (2-85 Jahre)?', isValidAge);
     
     if (!isValidAge) {
-        const message = age < 2 ? 
-            "El alumno/a es demasiado joven (debe tener al menos 1 año el 1 de enero este año)." :
-            "El alumno/a es demasiado mayor (debe tener menos de 85 años).";
+        const message = age < 1 ? 
+            "El/la alumno/a es demasiado joven (debe tener al menos 2 años el 31 de diciembre de este año)." :
+            "El/la alumno/a es demasiado mayor (debe tener menos de 85 años).";
         
         showAgeError(input, message);
         
@@ -521,7 +521,7 @@ function validateAge(input) {
         const jungElement = document.getElementById('JUNG');
         const altElement = document.getElementById('ALT');
         
-        if (age < 2) {
+        if (age < 1) {
             if (jungElement) jungElement.style.display = 'inline';
             if (altElement) altElement.style.display = 'none';
         } else {

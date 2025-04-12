@@ -52,7 +52,7 @@ $mail->Username   = "inscripcion@dsbilbao.org";  // GMAIL username
 $mail->Password   = "rkmurrahqgmkysnb";       // "2factor wintersommer";            // GMAIL password
 
 $dsb = 'Colegio Alemán de Bilbao';//mb_convert_encoding('Colegio Alemán de Bilbao', "ISO-8859-1", "UTF-8");
-$sendsubject = 'Campus de verano 2025 en el colegio alemán - Confirmación: '; //mb_convert_encoding('Campus de verano 2024 en alemán, inglés o francés - Confirmación: ', "ISO-8859-1", "UTF-8");
+$sendsubject = 'Campus de verano 2025 en el Colegio Alemán - Confirmación: '; //mb_convert_encoding('Campus de verano 2024 en alemán, inglés o francés - Confirmación: ', "ISO-8859-1", "UTF-8");
 
 $mail->SetFrom('inscripcion@dsbilbao.org', $dsb);
 $mail->AddReplyTo("inscripcion@dsbilbao.org",$dsb);

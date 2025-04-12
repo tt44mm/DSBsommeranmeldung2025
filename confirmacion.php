@@ -163,7 +163,7 @@ if (sizeof($_POST) > 0 || sizeof($_FILES) > 0) {
 
               <li><a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/" target="_parent">
                   <span class="icon"><i class="fas fa-chevron-left"></i></span>
-                  <span class="icontext">Volver a la p&aacute;gina del campus de verano 2024</span></a></li>
+                  <span class="icontext">Volver a la p&aacute;gina del campus de verano 2025</span></a></li>
 
               <li><a href="https://www.dsbilbao.org/cursos-de-idiomas/" target="_parent">
                   <span class="icon"><i class="fas fa-chevron-circle-left"></i></span>
@@ -247,7 +247,7 @@ if (sizeof($_POST) > 0 || sizeof($_FILES) > 0) {
 
             <li><a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/" target="_parent">
                 <span class="icon"><i class="fas fa-chevron-left"></i></span>
-                <span class="icontext">Volver a la p&aacute;gina del campus de verano 2024</span></a></li>
+                <span class="icontext">Volver a la p&aacute;gina del campus de verano 2025</span></a></li>
 
             <li><a href="https://www.dsbilbao.org/cursos-de-idiomas/" target="_parent">
                 <span class="icon"><i class="fas fa-chevron-circle-left"></i></span>

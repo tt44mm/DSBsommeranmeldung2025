@@ -103,7 +103,7 @@ $descricionprecios = '<ul class="multiline2X">
 //2022
 $zusatzpreis = 0;
 $today =  (mktime(0,0,0)/86400)-18000;//hour, minute, second	 TODAY
-//$stichtag = (mktime(0, 0, 0, 6, 1, 2024)/86400)-18000; //1.Juni 2024
+//$stichtag = (mktime(0, 0, 0, 6, 1, 2025)/86400)-18000; //1.Juni 2024
 //$rabattierterPreis = 980; //alle 4 Wochen vor dem Stichtag Bedingung if //buchungen nach dem Stiochtag kosten extra 10� pro woche
 //$vierwochenpreis = 0;
 //(($wochenanzahl=4) AND ($vierwochenpreis > 0)) $prize=$vierwochenpreis; //preisrabatt 980� statt 1000� bei Buchung alle 4 Wochen vor Stichtag

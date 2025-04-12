@@ -400,7 +400,7 @@ if (array_key_exists($key, $POSTsaneEmail)) {
         $primerpago = 0;
         $segundopago = $prize - $primerpago;
         if ($segundopago > 0) {
-          $segundopagotext = "Segundo pago: $segundopago Euros hasta el 31 de mayo 2024.";
+          $segundopagotext = "Segundo pago: $segundopago Euros hasta el 31 de mayo 2025.";
         } else {
           $segundopagotext = "";
         }

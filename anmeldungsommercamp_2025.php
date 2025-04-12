@@ -345,9 +345,13 @@ require_once 'includes/dropdownparadas_2025.php';
 			<div class="legend">
 				<p>Transporte gratis:</p>
 			</div>
-			<p><em>Los autobuses saldr&aacute;n con destino al Colegio Alem&aacute;n para llegar a las 9:00 horas. Todos los autobuses saldr&aacute;n a las 14:30 horas.
-En <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/transporte/" target="_new">Horarios de autob&uacute;s </a>
-se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter orientativo. </em></p>
+			<p><em>Se puede utilizar distintas líneas de autobús y distintas paradas de autobús en ida y vuelta. 
+				Están garantizadas las paradas elegidas en la inscripción, siempre que haya un número suficiente de alumnos para crear un recorrido que incluya estas paradas elegidas. 
+				No podemos prever el horario de la parada, ni la ruta, ya que será organizado una vez recibidas todas las inscripciones. Esto requiere cierta 
+				flexibilidad por su parte, ya que el horario de la parada elegida podría variar. 
+				
+En <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/transporte/" target="_new"> Horarios de autobús  </a>
+se pueden ver los recorridos en el Campus de verano 2024 con carácter orientativo. </em></p>
 
 			<div class="form-row">
 				<label class="col-sm-3 col-form-label required" for="Busida">Bus ida <sup>&#9733;</sup></label>
@@ -356,7 +360,7 @@ se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter ori
 				</div>
 			</div>
 			<div class="form-row">
-				<label class="col-sm-3 col-form-label required" for="Busvuelta">Bus vuelta<sup>&#9733;</sup></label>
+				<label class="col-sm-3 col-form-label required" for="Busvuelta">Bus vuelta 13:45<sup>&#9733;</sup></label>
 				<div class="col-sm-8">
 					<?php echo $optionsvuelta; ?>
 				</div>
