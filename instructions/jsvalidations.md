@@ -56,7 +56,7 @@ Die Validierung erfolgt hauptsächlich in der Funktion `submitclick()` in der Da
 |------|------|-------------|
 | Bus Hinfahrt | `Busida` | Pflichtfeld, darf nicht leer sein |
 | Bus Rückfahrt | `Busvuelta` | Pflichtfeld, darf nicht leer sein |
-| Bus Rückfahrt 16:15 | `Busvuelta2` | Pflichtfeld, darf nicht leer sein |
+| Bus Rückfahrt 16:30 | `Busvuelta2` | Pflichtfeld, darf nicht leer sein |
 
 ## Spezielle Validierungen
 
@@ -359,7 +359,7 @@ sequenceDiagram
 |------|------|-------------|
 | Bus Hinfahrt | `Busida` | Pflichtfeld, darf nicht leer sein |
 | Bus Rückfahrt | `Busvuelta` | Pflichtfeld, darf nicht leer sein |
-| Bus Rückfahrt 16:15 | `Busvuelta2` | Pflichtfeld, darf nicht leer sein |
+| Bus Rückfahrt 16:30 | `Busvuelta2` | Pflichtfeld, darf nicht leer sein |
 
 ## 4. Spezielle Validierungsfunktionen
 

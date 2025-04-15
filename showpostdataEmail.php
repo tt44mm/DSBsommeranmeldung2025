@@ -90,19 +90,26 @@ $stylekidlabrequired = ' style="margin-top:035em;padding:0.15em;display: inline;
 
 
 <div <?php echo $stylelegend ?>>Transporte gratis:</div>
-<div style="font-weight: normal; font-size: .9em;margin-left: 0px; margin-bottom: 1px; margin-top: 3px; margin-right: 0px; overflow: hidden; _height: 0.1%;"> Se puede utilizar distintas l&iacute;neas de autob&uacute;s y distintas paradas de autob&uacute;s en ida y vuelta. Est&aacute;n garantizadas las paradas elegidas en la inscripci&oacute;n, siempre que haya un n&uacute;mero suficiente de alumnos para crear un recorrido que incluye estas paradas elegidas. No podemos prever el horario de la parada, ni la ruta, ya que ser&aacute; organizado una vez recibidas todas las inscripciones. Esto requiere cierta flexibilidad por su parte, ya que el horario de la parada elegida podr&iacute;a variar.<br>
-  En <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/transporte/">Horarios de autob&uacute;s</a>&nbsp;se pueden ver los recorridos en el Campus de verano 2024 con car&aacute;cter orientativo.</div>
+<div style="font-weight: normal; font-size: .9em;margin-left: 0px; margin-bottom: 1px; margin-top: 3px; margin-right: 0px; overflow: hidden; _height: 0.1%;"> 
+  Se puede utilizar distintas líneas de autobús y distintas paradas de autobús en ida y vuelta. 
+				Están garantizadas las paradas elegidas en la inscripción, siempre que haya un número suficiente de alumnos para crear un recorrido que incluya estas paradas elegidas. 
+				No podemos prever el horario de la parada, ni la ruta, ya que será organizado una vez recibidas todas las inscripciones. Esto requiere cierta 
+				flexibilidad por su parte, ya que el horario de la parada elegida podría variar. <br>
+				
+En <a href="https://www.dsbilbao.org/cursos-de-idiomas/campus-de-verano/transporte/" target="_new"> Horarios de autobús  </a>
+se pueden ver los recorridos en el Campus de verano 2024 con carácter orientativo. 
+</div>
 
 <div <?php echo $stylelabmargin; ?>>
   <span <?php echo $stylelabrequired; ?>>Bus ida </span>
   <strong><?php echo strip_tags($POSTsaneEmail['Busida']) ?></strong>
 </div>
 <div <?php echo $stylelabmargin; ?>>
-  <span <?php echo $stylelabrequired; ?>>Bus vuelta </span>
+  <span <?php echo $stylelabrequired; ?>>Bus vuelta 13:45</span>
   <strong><?php echo strip_tags($POSTsaneEmail['Busvuelta']) ?></strong>
 </div>
 <div <?php echo $stylelabmargin; ?>>
-  <span <?php echo $stylelabrequired; ?>>Bus vuelta </span>
+  <span <?php echo $stylelabrequired; ?>>Bus vuelta 16:30</span>
   <strong><?php echo strip_tags($POSTsaneEmail['Busvuelta2']) ?></strong>
 </div>
 <div <?php echo $stylemainlegend; ?>>Alumno/a:</div>

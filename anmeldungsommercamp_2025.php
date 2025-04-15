@@ -367,7 +367,7 @@ se pueden ver los recorridos en el Campus de verano 2024 con carácter orientati
 			</div>
 
 			<div class="form-row">
-				<label class="col-sm-3 col-form-label required" for="Busvuelta2">Bus vuelta 16:15 <sup>&#9733;</sup></label>
+				<label class="col-sm-3 col-form-label required" for="Busvuelta2">Bus vuelta 16:30 <sup>&#9733;</sup></label>
 				<div class="col-sm-8">
 					<?php echo $optionsvuelta2; ?>
 				</div>
