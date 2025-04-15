@@ -51,7 +51,7 @@ echo "</pre><hr>";
         <div class="field"  ><label  class="required float" for="Busida">Bus ida  </label> <strong><?php echo strip_tags($POSTsane['Busida']) ?></strong></div>
 
 		<div class="field"  >
-          <label  class="required float" for="Busvuelta">Bus vuelta </label> <strong><?php echo strip_tags($POSTsane['Busvuelta']) ?></strong></div>
+          <label  class="required float" for="Busvuelta">Bus vuelta 13:45 </label> <strong><?php echo strip_tags($POSTsane['Busvuelta']) ?></strong></div>
 
         <div class="field"  >
           <label  class="required float" for="Busvuelta2">Bus vuelta 16:30 </label> <strong><?php echo strip_tags($POSTsane['Busvuelta2']) ?></strong></div>
